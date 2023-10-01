@@ -94,36 +94,3 @@ fn wyhash(key: StringLiteral, _seed: UInt64, secret: U256) -> UInt64:
     wymum(a, b)
 
     return wy_mix(a ^ secret[0] ^ len(key), b ^ secret[1])
-
-fn main():
-    print(wy_mix(0xff_ff_ff_ff_ff_ff_ff_ff, 10))
-    print(folded_multiply(0xff_ff_ff_ff_ff_ff_ff_ff, 10))
-    let default_secret = SIMD[DType.uint64, 4](0xa0761d6478bd642f, 0xe7037ed1a0b428db, 0x8ebc6af09c88c6e3, 0x589965cc75374cc3)
-    print("hello", wyhash("hello", 42, default_secret))
-    print("hello world", wyhash("hello world", 42, default_secret))
-    print("hello2", wyhash("hello2", 42, default_secret))
-
-    let msgs_v = vec(
-        "",
-        "a",
-        "abc",
-        "message digest",
-        "abcdefghijklmnopqrstuvwxyz",
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
-        "1234567890123456789012345678901234567890123456789012345678901234567890"
-        "1234567890"
-    )
-
-    let etalons_v = vec[UInt64](
-        0x42bc986dc5eec4d3,
-        0x84508dc903c31551,
-        0x0bc54887cfc9ecb1,
-        0x6e2ff3298208a67c,
-        0x9a64e42e897195b9,
-        0x9199383239c32554,
-        0x7c1ccf6bba30f5a5
-    )
-
-    for i in range(len(msgs_v)):
-        let hash = wyhash(msgs_v[i], i, default_secret)
-        print(etalons_v[i], hash, hash == etalons_v[i])
