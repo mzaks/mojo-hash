@@ -5,6 +5,7 @@ from wyhash import wyhash
 from time import now
 from testing import assert_equal
 from corpus import corpus7
+from ahasher import ahash
 
 fn _fxhash64(s: StringLiteral) -> UInt64:
     return fxhash64(s, 0)
@@ -15,7 +16,7 @@ fn _wyhash(s : StringLiteral) -> UInt64:
 
 fn main():
     let corpus = corpus7()
-    var map = HashMapDict[Int, _wyhash]()
+    var map = HashMapDict[Int, ahash]()
     var total = 0
     for i in range(len(corpus)):
         let key = corpus[i]
