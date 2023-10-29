@@ -7,11 +7,13 @@ alias U128 = SIMD[DType.uint64, 2]
 alias MULTIPLE = 6364136223846793005
 alias ROT = 23
 
+
 @always_inline
 fn folded_multiply(s: UInt64, by: UInt64) -> UInt64:
     let b1 = s * bswap(by)
     let b2 = bswap(s) * (~by)
     return b1 ^ bswap(b2)
+
 
 @always_inline
 fn read_small(data: DTypePointer[DType.uint8], length: Int) -> U128:

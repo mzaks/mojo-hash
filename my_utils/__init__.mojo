@@ -1,4 +1,35 @@
-from my_utils import vec
+from math import min
+
+fn int_cmp(a: UInt32, b: UInt32) -> Int:
+    return a.to_int() - b.to_int()
+
+fn int_cmp64(a: UInt64, b: UInt64) -> Int:
+    return a.to_int() - b.to_int()
+
+fn int_to_str(a: UInt32) -> String:
+    return String(a)
+
+fn int_to_str64(a: UInt64) -> String:
+    return String(a)
+
+fn cmp_strl(a: StringLiteral, b: StringLiteral) -> Int:
+    let l = min(len(a), len(b))
+    let p1 = DTypePointer[DType.int8](a.data()).bitcast[DType.uint8]()
+    let p2 = DTypePointer[DType.int8](b.data()).bitcast[DType.uint8]()
+    let diff = memcmp(p1, p2, l)
+
+    return diff if diff != 0 else len(a) - len(b)
+
+fn stsl(a: StringLiteral) -> String:
+    return a
+
+fn vec[T: AnyType](*values: T) -> UnsafeFixedVector[T]:
+    let elements_list: VariadicList[T] = values
+    var result = UnsafeFixedVector[T](len(elements_list))
+    result.clear()
+    for i in range(len(elements_list)):
+        result.append(values[i])
+    return result
 
 fn corpus1() -> UnsafeFixedVector[StringLiteral]:
     return vec('Lorem', 'ipsum', 'dolor', 'sit', 'amet,', 'consectetur', 'adipiscing', 'elit.', 'Quisque', 'orci', 'urna,', 'pretium', 'et', 'porta', 'ac,', 'porttitor', 'sit', 'amet', 'sem.', 'Fusce', 'sagittis', 'lorem', 'neque,', 'vitae', 'sollicitudin', 'elit', 'suscipit', 'et.', 'In', 'interdum', 'convallis', 'nisl', 'in', 'ornare.', 'Vestibulum', 'ante', 'ipsum', 'primis', 'in', 'faucibus', 'orci', 'luctus', 'et', 'ultrices', 'posuere', 'cubilia', 'curae;', 'Aliquam', 'erat', 'volutpat.', 'Morbi', 'mollis', 'iaculis', 'lectus', 'ac', 'tincidunt.', 'Fusce', 'nisi', 'lacus,', 'semper', 'eu', 'dignissim', 'et,', 'malesuada', 'non', 'mi.', 'Sed', 'euismod', 'urna', 'vel', 'elit', 'faucibus,', 'eu', 'bibendum', 'ante', 'fringilla.', 'Curabitur', 'tempus', 'in', 'turpis', 'at', 'mattis.', 'Aliquam', 'erat', 'volutpat.', 'Donec', 'maximus', 'elementum', 'felis,', 'sit', 'amet', 'dignissim', 'augue', 'tincidunt', 'blandit.', 'Aliquam', 'fermentum,', 'est', 'eu', 'mollis.')

@@ -1,6 +1,5 @@
 from math.math import rotate_bits_left
 
-
 alias ROTATE = 5
 alias SEED64 = 0x51_7c_c1_b7_27_22_0a_95
 alias SEED32 = 0x9e_37_79_b9

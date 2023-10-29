@@ -1,30 +1,5 @@
 from math.bit import bit_length
-from utils.vector import DynamicVector, UnsafeFixedVector 
 from utils.list import VariadicList
-from math import min
-
-fn int_cmp(a: UInt32, b: UInt32) -> Int:
-    return a.to_int() - b.to_int()
-
-fn int_cmp64(a: UInt64, b: UInt64) -> Int:
-    return a.to_int() - b.to_int()
-
-fn int_to_str(a: UInt32) -> String:
-    return String(a)
-
-fn int_to_str64(a: UInt64) -> String:
-    return String(a)
-
-fn cmp_strl(a: StringLiteral, b: StringLiteral) -> Int:
-    let l = min(len(a), len(b))
-    let p1 = DTypePointer[DType.int8](a.data()).bitcast[DType.uint8]()
-    let p2 = DTypePointer[DType.int8](b.data()).bitcast[DType.uint8]()
-    let diff = memcmp(p1, p2, l)
-
-    return diff if diff != 0 else len(a) - len(b)
-
-fn stsl(a: StringLiteral) -> String:
-    return a
 
 struct FibyTree[T: AnyType, cmp: fn(T, T) -> Int, to_str: fn(T) -> String]:
     alias Union = 0
@@ -693,11 +668,3 @@ struct FibyTree[T: AnyType, cmp: fn(T, T) -> Int, to_str: fn(T) -> String]:
             print(indentation + " ", "- ・")
         if self.has_right(index):
             self._print(indentation + " ", self.right[index.to_int()])
-
-fn vec[T: AnyType](*values: T) -> UnsafeFixedVector[T]:
-    let elements_list: VariadicList[T] = values
-    var result = UnsafeFixedVector[T](len(elements_list))
-    result.clear()
-    for i in range(len(elements_list)):
-        result.append(values[i])
-    return result

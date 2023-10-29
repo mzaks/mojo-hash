@@ -1,4 +1,3 @@
-from fnv1a import fnv1a64
 from memory import memset_zero, memcpy
 
 struct HashMapDict[V: AnyType, hash: fn(StringLiteral) -> UInt64]:
@@ -140,32 +139,3 @@ struct HashMapDict[V: AnyType, hash: fn(StringLiteral) -> UInt64]:
                 print_no_newline((mask >> j) & 1)
             print_no_newline(" ")
         print_no_newline("\n")
-
-fn main():
-    var m = HashMapDict[Int, fnv1a64]()
-    m.put("a", 123)
-    m.debug()
-    print(m.get("a", 0))
-
-    m.put("b", 12)
-    m.put("c", 345)
-    m.put("a", 111)
-    m.debug()
-    print(m.get("a", 0))
-    print(m.get("b", 0))
-    m.delete("b")
-    print(m.get("b", 0))
-    m.debug()
-
-    m._rehash()
-    m.debug()
-    print(m.get("a", 0))
-    print(m.get("b", 0))
-    print(m.get("c", 0))
-
-    m.put("b", 45)
-    m.debug()
-
-    print(m.get("a", 0))
-    print(m.get("b", 0))
-    print(m.get("c", 0))

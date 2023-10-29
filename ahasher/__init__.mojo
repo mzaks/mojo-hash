@@ -1,0 +1,1 @@
+from .ahasher import ahash, AHasher

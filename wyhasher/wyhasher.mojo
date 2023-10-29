@@ -1,6 +1,6 @@
+
 from math.bit import bit_length, bswap
 from math.math import rotate_bits_right
-from my_utils import vec
 
 alias U128 = SIMD[DType.uint64, 2]
 alias U256 = SIMD[DType.uint64, 4]

@@ -1,11 +1,12 @@
 from time import now
 from math import min, max
-from my_utils import vec, FibyTree, int_cmp64, int_to_str64, cmp_strl, stsl, int_cmp, int_to_str
+from fiby_tree import FibyTree
+from my_utils import vec, int_cmp64, int_to_str64, cmp_strl, stsl, int_cmp, int_to_str, corpus1, corpus2, corpus3, corpus4, corpus5, corpus6, corpus7
 from ahasher import ahash
-from wyhash import wyhash
+from wyhasher import wyhash
 from fnv1a import fnv1a64, fnv1a32
 from fxhash import fxhash64, fxhash32
-from corpus import corpus1, corpus2, corpus3, corpus4, corpus5, corpus6, corpus7
+
 
 fn benchamark[hashfn: fn(StringLiteral) -> UInt64](corpus: UnsafeFixedVector[StringLiteral], name: StringLiteral):
     var f = FibyTree[UInt64, int_cmp64, int_to_str64]()
