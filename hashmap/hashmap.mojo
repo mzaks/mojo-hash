@@ -1,7 +1,7 @@
 from memory import memset_zero, memcpy
 
-struct HashMapDict[V: AnyType, hash: fn(StringLiteral) -> UInt64]:
-    var keys: DynamicVector[StringLiteral]
+struct HashMapDict[V: CollectionElement, hash: fn(String) -> UInt64]:
+    var keys: DynamicVector[String]
     var values: DynamicVector[V]
     var key_map: DTypePointer[DType.uint32]
     var deleted_mask: DTypePointer[DType.uint8]
@@ -11,14 +11,14 @@ struct HashMapDict[V: AnyType, hash: fn(StringLiteral) -> UInt64]:
     fn __init__(inout self):
         self.count = 0
         self.capacity = 16
-        self.keys = DynamicVector[StringLiteral](self.capacity)
+        self.keys = DynamicVector[String](self.capacity)
         self.values = DynamicVector[V](self.capacity)
         self.key_map = DTypePointer[DType.uint32].alloc(self.capacity)
         self.deleted_mask = DTypePointer[DType.uint8].alloc(self.capacity >> 3)
         memset_zero(self.key_map, self.capacity)
         memset_zero(self.deleted_mask, self.capacity >> 3)
 
-    fn put(inout self, key: StringLiteral, value: V):
+    fn put(inout self, key: String, value: V):
         if self.count / self.capacity >= 0.8:
             self._rehash()
         
@@ -63,7 +63,7 @@ struct HashMapDict[V: AnyType, hash: fn(StringLiteral) -> UInt64]:
         for i in range(len(self.keys)):
             self._put(self.keys[i], self.values[i], i + 1)
 
-    fn _put(inout self, key: StringLiteral, value: V, rehash_index: Int):
+    fn _put(inout self, key: String, value: V, rehash_index: Int):
         let key_hash = hash(key)
         let modulo_mask = self.capacity - 1
         var key_map_index = (key_hash & modulo_mask).to_int()
@@ -91,7 +91,7 @@ struct HashMapDict[V: AnyType, hash: fn(StringLiteral) -> UInt64]:
             
             key_map_index = (key_map_index + 1) & modulo_mask
 
-    fn get(self, key: StringLiteral, default: V) -> V:
+    fn get(self, key: String, default: V) -> V:
         let key_hash = hash(key)
         let modulo_mask = self.capacity - 1
         var key_map_index = (key_hash & modulo_mask).to_int()
@@ -106,7 +106,7 @@ struct HashMapDict[V: AnyType, hash: fn(StringLiteral) -> UInt64]:
                 return self.values[key_index - 1]
             key_map_index = (key_map_index + 1) & modulo_mask
 
-    fn delete(inout self, key: StringLiteral):
+    fn delete(inout self, key: String):
         let key_hash = hash(key)
         let modulo_mask = self.capacity - 1
         var key_map_index = (key_hash & modulo_mask).to_int()

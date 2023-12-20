@@ -87,9 +87,9 @@ struct AHasher:
             self.large_update(value)
 
 @always_inline
-fn ahash(s: StringLiteral) -> UInt64:
+fn ahash(s: String) -> UInt64:
     let length = len(s)
-    let b = DTypePointer[DType.int8](s.data()).bitcast[DType.uint8]()
+    let b = s._as_ptr().bitcast[DType.uint8]()
     var hasher = AHasher(U256(0, 0, 0, 0))
 
     if length > 8:

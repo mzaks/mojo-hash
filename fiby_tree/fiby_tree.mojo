@@ -1,7 +1,8 @@
 from math.bit import bit_length
-from utils.list import VariadicList
+# from utils.list import VariadicList
+from collections.vector import DynamicVector
 
-struct FibyTree[T: AnyType, cmp: fn(T, T) -> Int, to_str: fn(T) -> String]:
+struct FibyTree[T: CollectionElement, cmp: fn(a:T, b:T) -> Int, to_str: fn(T) -> String](Sized):
     alias Union = 0
     alias Intersection = 1
     alias Difference = 2
@@ -18,7 +19,7 @@ struct FibyTree[T: AnyType, cmp: fn(T, T) -> Int, to_str: fn(T) -> String]:
     var max_depth: UInt16
     var balanced: Bool
     
-    fn __init__(inout self, *elements: T):
+    fn __init__(inout self):
         self.elements = DynamicVector[T]()
         self.left = DynamicVector[UInt16]()
         self.right = DynamicVector[UInt16]()
@@ -26,9 +27,9 @@ struct FibyTree[T: AnyType, cmp: fn(T, T) -> Int, to_str: fn(T) -> String]:
         self.max_depth = 0
         self.balanced = False
         
-        let elements_list: VariadicList[T] = elements
-        for i in range(len(elements_list)):
-            self.add(elements[i])
+        # let elements_list: VariadicList[T] = elements
+        # for i in range(len(elements_list)):
+        #     self.add(elements[i])
 
     fn __moveinit__(inout self, owned existing: Self):
         self.elements = existing.elements
@@ -172,9 +173,9 @@ struct FibyTree[T: AnyType, cmp: fn(T, T) -> Int, to_str: fn(T) -> String]:
         return self._swap_with_next_smaller_leaf(index)
     
     @always_inline("nodebug")
-    fn sorted_elements(self) -> UnsafeFixedVector[T]:
+    fn sorted_elements(self) -> DynamicVector[T]:
         let number_of_elements = self.__len__()
-        var result = UnsafeFixedVector[T](number_of_elements)
+        var result = DynamicVector[T](number_of_elements)
         if number_of_elements == 0:
             return result
         var stack = DynamicVector[UInt16](self.max_depth.to_int())
@@ -202,7 +203,7 @@ struct FibyTree[T: AnyType, cmp: fn(T, T) -> Int, to_str: fn(T) -> String]:
     
     fn union(self, other: Self) -> Self:
         var result = Self()
-        let combined: UnsafeFixedVector[T]
+        let combined: DynamicVector[T]
         if other.__len__() == 0:
             combined = self.sorted_elements()
         elif self.__len__() == 0:
@@ -243,7 +244,7 @@ struct FibyTree[T: AnyType, cmp: fn(T, T) -> Int, to_str: fn(T) -> String]:
         
     fn difference(self, other: Self) -> Self:
         var result = FibyTree[T, cmp, to_str]()
-        let combined: UnsafeFixedVector[T]
+        let combined: DynamicVector[T]
         if other.__len__() == 0 or self.__len__() == 0:
             combined = self.sorted_elements()
         else:
@@ -269,7 +270,7 @@ struct FibyTree[T: AnyType, cmp: fn(T, T) -> Int, to_str: fn(T) -> String]:
     
     fn symmetric_difference(self, other: Self) -> Self:
         var result = FibyTree[T, cmp, to_str]()
-        let combined: UnsafeFixedVector[T]
+        let combined: DynamicVector[T]
         if other.__len__() == 0:
             combined = self.sorted_elements()
         elif self.__len__() == 0:
@@ -289,18 +290,18 @@ struct FibyTree[T: AnyType, cmp: fn(T, T) -> Int, to_str: fn(T) -> String]:
         self._balance_with(combined)
     
     @always_inline("nodebug")
-    fn _combine[type: Int](self, other: Self) -> UnsafeFixedVector[T]:
+    fn _combine[type: Int](self, other: Self) -> DynamicVector[T]:
         let num1 = self.__len__()
         let num2 = other.__len__()
         # assert(num1 > 0)
         # assert(num2 > 0)
-        var combined = UnsafeFixedVector[T](num1 + num2)
+        var combined = DynamicVector[T](num1 + num2)
         var cur1: UInt16 = 0
         var cur2: UInt16 = 0
         var stack1 = DynamicVector[UInt16](self.max_depth.to_int())
         var stack2 = DynamicVector[UInt16](other.max_depth.to_int())
-        var last_returned1 = UnsafeFixedVector[T](1)
-        var last_returned2 = UnsafeFixedVector[T](1)
+        var last_returned1 = DynamicVector[T](1)
+        var last_returned2 = DynamicVector[T](1)
         var e1 = self._sorted_iter(cur1, stack1, last_returned1)
         last_returned1.append(e1)
         var e2 = other._sorted_iter(cur2, stack2, last_returned2)
@@ -428,8 +429,8 @@ struct FibyTree[T: AnyType, cmp: fn(T, T) -> Int, to_str: fn(T) -> String]:
         var cur2: UInt16 = 0
         var stack1 = DynamicVector[UInt16](self.max_depth.to_int())
         var stack2 = DynamicVector[UInt16](other.max_depth.to_int())
-        var last_returned1 = UnsafeFixedVector[T](1)
-        var last_returned2 = UnsafeFixedVector[T](1)
+        var last_returned1 = DynamicVector[T](1)
+        var last_returned2 = DynamicVector[T](1)
         var e1 = self._sorted_iter(cur1, stack1, last_returned1)
         last_returned1.append(e1)
         var e2 = other._sorted_iter(cur2, stack2, last_returned2)
@@ -496,7 +497,7 @@ struct FibyTree[T: AnyType, cmp: fn(T, T) -> Int, to_str: fn(T) -> String]:
         return False
     
     @always_inline("nodebug")
-    fn _sorted_iter(self, inout current: UInt16, inout stack: DynamicVector[UInt16], inout last_returned: UnsafeFixedVector[T]) -> T:
+    fn _sorted_iter(self, inout current: UInt16, inout stack: DynamicVector[UInt16], inout last_returned: DynamicVector[T]) -> T:
         # using UnsafeFixedVector[T](1) as poor mans Optional for last_returned
         if len(last_returned) == 0 or cmp(last_returned[0], self.elements[self.left[current.to_int()].to_int()]) < 0:
             while self.has_left(current):
@@ -618,11 +619,11 @@ struct FibyTree[T: AnyType, cmp: fn(T, T) -> Int, to_str: fn(T) -> String]:
         self._balance_with(sorted_elements)
     
     @always_inline("nodebug")
-    fn _balance_with(inout self, sorted_elements: UnsafeFixedVector[T]):
+    fn _balance_with(inout self, sorted_elements: DynamicVector[T]):
         let new_size = len(sorted_elements)
-        self.elements.resize(new_size)
-        self.left.resize(new_size)
-        self.right.resize(new_size)
+        self.elements.resize(new_size, self.elements[len(self.elements) - 1])
+        self.left.resize(new_size, 0)
+        self.right.resize(new_size, 0)
 
         var i: Int = 0
         self._eytzinger(i, 1, sorted_elements)
@@ -643,7 +644,7 @@ struct FibyTree[T: AnyType, cmp: fn(T, T) -> Int, to_str: fn(T) -> String]:
         self.balanced = True
         self.max_depth = self._optimal_depth()
     
-    fn _eytzinger(inout self, inout i: Int, k: Int, v: UnsafeFixedVector[T]):
+    fn _eytzinger(inout self, inout i: Int, k: Int, v: DynamicVector[T]):
         if k <= len(v):
             self._eytzinger(i, k * 2, v)
             self.elements[k - 1] = v[i]

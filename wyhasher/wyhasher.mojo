@@ -45,9 +45,9 @@ fn wyr3(p: DTypePointer[DType.uint8], k: Int) -> UInt64:
         | (p.offset(k >> 1).load().cast[DType.uint64]() << 8)
         | p.offset(k - 1).load().cast[DType.uint64]()
 
-fn wyhash(key: StringLiteral, _seed: UInt64, secret: U256) -> UInt64:
+fn wyhash(key: String, _seed: UInt64, secret: U256) -> UInt64:
     var length = len(key)
-    var p = DTypePointer[DType.int8](key.data()).bitcast[DType.uint8]()
+    var p = key._as_ptr().bitcast[DType.uint8]()
     var seed = _seed ^wy_mix(_seed ^ secret[0], secret[1])
     var a: UInt64 = 0
     var b: UInt64 = 0
