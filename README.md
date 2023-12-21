@@ -96,6 +96,80 @@ fxHash64 avg hash compute 19.503105590062113 | hash colision 1.0 | hash colision
 std_Hash64 avg hash compute 242.59006211180125 | hash colision 1.0 | hash colision mod 512 1.1626016260162602
 ```
 
+MacMini M1, 2020
+
+```
+Corpus 1
+Word count 100 | unique word count 82 | min key size 2 | avg key size 5.71 | max key size 12
+AHash avg hash compute 19.0 | hash colision 1.0 | hash colision mod 512 1.1549295774647887
+Wyhash avg hash compute 29.5 | hash colision 1.0 | hash colision mod 512 1.1232876712328768
+fnv1a32 avg hash compute 18.5 | hash colision 1.0 | hash colision mod 512 1.1232876712328768
+fnv1a64 avg hash compute 17.5 | hash colision 1.0 | hash colision mod 512 1.0249999999999999
+fxHash32 avg hash compute 18.0 | hash colision 1.0 | hash colision mod 512 1.2238805970149254
+fxHash64 avg hash compute 19.5 | hash colision 1.0 | hash colision mod 512 1.1884057971014492
+std_Hash64 avg hash compute 84.5 | hash colision 1.0 | hash colision mod 512 1.0512820512820513
+
+Corpus 2
+Word count 999 | unique word count 203 | min key size 1 | avg key size 4.8058058058058055 | max key size 14
+AHash avg hash compute 17.567567567567568 | hash colision 1.0 | hash colision mod 512 1.2083333333333333
+Wyhash avg hash compute 25.925925925925927 | hash colision 1.0 | hash colision mod 512 1.2303030303030302
+fnv1a32 avg hash compute 19.96996996996997 | hash colision 1.0 | hash colision mod 512 1.2848101265822784
+fnv1a64 avg hash compute 17.967967967967969 | hash colision 1.0 | hash colision mod 512 1.2011834319526626
+fxHash32 avg hash compute 16.016016016016017 | hash colision 1.0 | hash colision mod 512 1.3716216216216217
+fxHash64 avg hash compute 13.863863863863864 | hash colision 1.0 | hash colision mod 512 1.4195804195804196
+std_Hash64 avg hash compute 75.17517517517517 | hash colision 1.0 | hash colision mod 512 1.2303030303030302
+
+Corpus 3
+Word count 999 | unique word count 192 | min key size 1 | avg key size 4.293293293293293 | max key size 13
+AHash avg hash compute 18.468468468468469 | hash colision 1.0 | hash colision mod 512 1.1636363636363636
+Wyhash avg hash compute 24.474474474474473 | hash colision 1.0 | hash colision mod 512 1.2151898734177216
+fnv1a32 avg hash compute 19.81981981981982 | hash colision 1.0 | hash colision mod 512 1.1428571428571428
+fnv1a64 avg hash compute 17.417417417417418 | hash colision 1.0 | hash colision mod 512 1.2229299363057324
+fxHash32 avg hash compute 15.665665665665665 | hash colision 1.0 | hash colision mod 512 1.352112676056338
+fxHash64 avg hash compute 16.216216216216218 | hash colision 1.0 | hash colision mod 512 1.4436090225563909
+std_Hash64 avg hash compute 87.037037037037038 | hash colision 1.0 | hash colision mod 512 1.1779141104294479
+
+Corpus 4
+Word count 999 | unique word count 532 | min key size 2 | avg key size 10.646646646646646 | max key size 37
+AHash avg hash compute 19.51951951951952 | hash colision 1.0 | hash colision mod 512 1.5786350148367954
+Wyhash avg hash compute 24.874874874874873 | hash colision 1.0 | hash colision mod 512 1.5975975975975976
+fnv1a32 avg hash compute 25.575575575575577 | hash colision 1.0 | hash colision mod 512 1.6170212765957446
+fnv1a64 avg hash compute 24.274274274274273 | hash colision 1.0 | hash colision mod 512 1.5928143712574849
+fxHash32 avg hash compute 15.665665665665665 | hash colision 1.0 | hash colision mod 512 1.6677115987460815
+fxHash64 avg hash compute 17.867867867867869 | hash colision 1.0 | hash colision mod 512 1.9850746268656716
+std_Hash64 avg hash compute 73.523523523523522 | hash colision 1.0018832391713748 | hash colision mod 512 1.5833333333333333
+
+Corpus 5
+Word count 999 | unique word count 208 | min key size 2 | avg key size 5.6496496496496498 | max key size 18
+AHash avg hash compute 17.817817817817819 | hash colision 1.0 | hash colision mod 512 1.1620111731843576
+Wyhash avg hash compute 26.576576576576578 | hash colision 1.0 | hash colision mod 512 1.1685393258426966
+fnv1a32 avg hash compute 19.76976976976977 | hash colision 1.0 | hash colision mod 512 1.2093023255813953
+fnv1a64 avg hash compute 18.918918918918919 | hash colision 1.0 | hash colision mod 512 1.2530120481927711
+fxHash32 avg hash compute 17.817817817817819 | hash colision 1.0 | hash colision mod 512 1.3506493506493507
+fxHash64 avg hash compute 15.715715715715715 | hash colision 1.0 | hash colision mod 512 1.3594771241830066
+std_Hash64 avg hash compute 75.425425425425431 | hash colision 1.0 | hash colision mod 512 1.2023121387283238
+
+Corpus 6
+Word count 10 | unique word count 10 | min key size 378 | avg key size 499.19999999999999 | max key size 558
+AHash avg hash compute 30.0 | hash colision 1.0 | hash colision mod 512 1.0
+Wyhash avg hash compute 90.0 | hash colision 1.0 | hash colision mod 512 1.0
+fnv1a32 avg hash compute 635.0 | hash colision 1.0 | hash colision mod 512 1.0
+fnv1a64 avg hash compute 660.0 | hash colision 1.0 | hash colision mod 512 1.0
+fxHash32 avg hash compute 250.0 | hash colision 1.0 | hash colision mod 512 1.0
+fxHash64 avg hash compute 145.0 | hash colision 1.0 | hash colision mod 512 1.0
+std_Hash64 avg hash compute 220.0 | hash colision 1.0 | hash colision mod 512 1.0
+
+Corpus 7
+Word count 161 | unique word count 143 | min key size 8 | avg key size 22.260869565217391 | max key size 43
+AHash avg hash compute 17.701863354037268 | hash colision 1.0 | hash colision mod 512 1.1259842519685039
+Wyhash avg hash compute 29.19254658385093 | hash colision 1.0 | hash colision mod 512 1.1439999999999999
+fnv1a32 avg hash compute 42.546583850931675 | hash colision 1.0 | hash colision mod 512 1.153225806451613
+fnv1a64 avg hash compute 39.440993788819874 | hash colision 1.0 | hash colision mod 512 1.1626016260162602
+fxHash32 avg hash compute 18.012422360248447 | hash colision 1.0 | hash colision mod 512 1.1259842519685039
+fxHash64 avg hash compute 19.875776397515526 | hash colision 1.0 | hash colision mod 512 1.153225806451613
+std_Hash64 avg hash compute 113.35403726708074 | hash colision 1.0 | hash colision mod 512 1.1259842519685039
+```
+
 ## Benchmark HashMap
 
 This repository also contains a simple HashMap implementation, which allows key to be of type String and value to conform with CollectionElement trait.
@@ -114,4 +188,17 @@ FxHash64 Avg put time 223.24844720496895
 FxHash64 Avg get time 84.171428571428578
 StdHash Avg put time 634.18819875776398
 StdHash Avg get time 278.51801242236024
+```
+
+MacMini M1, 2020
+
+```
+AHash Avg put time 347.82608695652175
+AHash Avg get time 162.11180124223603
+WyHash Avg put time 363.35403726708074
+WyHash Avg get time 192.54658385093168
+FxHash64 Avg put time 418.63354037267078
+FxHash64 Avg get time 170.80745341614906
+StdHash Avg put time 583.22981366459624
+StdHash Avg get time 226.08695652173913
 ```

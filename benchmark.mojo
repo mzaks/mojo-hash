@@ -20,8 +20,8 @@ fn benchamark[hashfn: fn(String) -> UInt64](corpus: DynamicVector[String], name:
     let mod = (1 << 9)
     var hashes = DynamicVector[UInt64]()
     var mod_hashes: DynamicVector[UInt64] = 0
+    var total = 0
     for _ in range(20):
-        var total = 0
         for i in range(len(corpus)):
             let key = corpus[i]
             let tik = now()
@@ -45,8 +45,8 @@ fn benchamark[hashfn: fn(String) -> UInt64](corpus: DynamicVector[String], name:
                 mod_hashes.append(hash & (mod - 1))# f.add(hash)
             # f1.add(hash & (mod - 1))
             fs.add(key)
-        let c_avg = total / len(corpus)
-        min_avg = min(min_avg, c_avg)
+    let c_avg = (total / 20) / len(corpus)
+    min_avg = min(min_avg, c_avg)
     print(
         name, "avg hash compute", min_avg, "| hash colision", len(fs) / len(hashes),
         "| hash colision mod", mod, len(fs) /  len(mod_hashes)
@@ -60,8 +60,8 @@ fn benchamark32[hashfn: fn(String) -> UInt32](corpus: DynamicVector[String], nam
     let mod = (1 << 9)
     var hashes: DynamicVector[UInt32] = 0
     var mod_hashes: DynamicVector[UInt32] = 0
+    var total = 0
     for _ in range(20):
-        var total = 0
         for i in range(len(corpus)):
             let key = corpus[i]
             let tik = now()
@@ -85,8 +85,8 @@ fn benchamark32[hashfn: fn(String) -> UInt32](corpus: DynamicVector[String], nam
             # f.add(hash)
             # f1.add(hash & (mod - 1))
             fs.add(key)
-        let c_avg = total / len(corpus)
-        min_avg = min(min_avg, c_avg)
+    let c_avg = (total / 20) / len(corpus)
+    min_avg = min(min_avg, c_avg)
     print(
         name, "avg hash compute", min_avg, "| hash colision", len(fs) / len(hashes), 
         "| hash colision mod", mod, len(fs) /  len(mod_hashes)
