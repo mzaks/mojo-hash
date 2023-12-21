@@ -55,5 +55,5 @@ fn benchamark_hash_map[hash_fn: fn(String) -> UInt64](name: String) raises:
 fn main() raises :
     benchamark_hash_map[ahash]("AHash")
     benchamark_hash_map[_wyhash]("WyHash")
-    benchamark_hash_map[_fxhash64]("FxHash")
+    benchamark_hash_map[_fxhash64]("FxHash64")
     benchamark_hash_map[_std_hash]("StdHash")
