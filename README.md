@@ -170,6 +170,8 @@ fxHash64 avg hash compute 19.875776397515526 | hash colision 1.0 | hash colision
 std_Hash64 avg hash compute 113.35403726708074 | hash colision 1.0 | hash colision mod 512 1.1259842519685039
 ```
 
+![Hash functions benchmark chart](images/hash_functions.png)
+
 ## Benchmark HashMap
 
 This repository also contains a simple HashMap implementation, which allows key to be of type String and value to conform with CollectionElement trait.
@@ -202,3 +204,5 @@ FxHash64 Avg get time 170.80745341614906
 StdHash Avg put time 583.22981366459624
 StdHash Avg get time 226.08695652173913
 ```
+
+![Hash map benchmark chart](images/hash_map.png)
