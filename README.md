@@ -172,6 +172,39 @@ std_Hash64 avg hash compute 113.35403726708074 | hash colision 1.0 | hash colisi
 
 ![Hash functions benchmark chart](images/hash_functions.png)
 
+### Rust benchmarks results:
+
+```
+Avg time Default, 16.622: total elements: 100, unique elements: 82, collisions: 1.0, collisions % 512: 1.0649350649350648, keys min: 2, avg: 6, max: 12
+Avg time FxHasher, 17.769000000000002: total elements: 100, unique elements: 82, collisions: 1.0, collisions % 512: 1.0933333333333333, keys min: 2, avg: 6, max: 12
+Avg time AHasher, 16.5035: total elements: 100, unique elements: 82, collisions: 1.0, collisions % 512: 1.1232876712328768, keys min: 2, avg: 6, max: 12
+Avg time WyHash, 17.2495: total elements: 100, unique elements: 82, collisions: 1.0, collisions % 512: 1.0933333333333333, keys min: 2, avg: 6, max: 12
+Avg time Default, 16.026176176176175: total elements: 999, unique elements: 203, collisions: 1.0, collisions % 512: 1.1871345029239766, keys min: 1, avg: 5, max: 14
+Avg time FxHasher, 16.14034034034034: total elements: 999, unique elements: 203, collisions: 1.0, collisions % 512: 1.2083333333333333, keys min: 1, avg: 5, max: 14
+Avg time AHasher, 16.455305305305306: total elements: 999, unique elements: 203, collisions: 1.0, collisions % 512: 1.2011834319526626, keys min: 1, avg: 5, max: 14
+Avg time WyHash, 17.575925925925926: total elements: 999, unique elements: 203, collisions: 1.0, collisions % 512: 1.2083333333333333, keys min: 1, avg: 5, max: 14
+Avg time Default, 16.30725725725726: total elements: 999, unique elements: 192, collisions: 1.0, collisions % 512: 1.238709677419355, keys min: 1, avg: 5, max: 13
+Avg time FxHasher, 17.076676676676676: total elements: 999, unique elements: 192, collisions: 1.0, collisions % 512: 1.263157894736842, keys min: 1, avg: 5, max: 13
+Avg time AHasher, 16.477227227227228: total elements: 999, unique elements: 192, collisions: 1.0, collisions % 512: 1.2229299363057324, keys min: 1, avg: 5, max: 13
+Avg time WyHash, 17.61991991991992: total elements: 999, unique elements: 192, collisions: 1.0, collisions % 512: 1.2075471698113207, keys min: 1, avg: 5, max: 13
+Avg time Default, 17.10630630630631: total elements: 999, unique elements: 532, collisions: 1.0, collisions % 512: 1.5647058823529412, keys min: 2, avg: 12, max: 37
+Avg time FxHasher, 18.07007007007007: total elements: 999, unique elements: 532, collisions: 1.0, collisions % 512: 1.6419753086419753, keys min: 2, avg: 12, max: 37
+Avg time AHasher, 17.31981981981982: total elements: 999, unique elements: 532, collisions: 1.0, collisions % 512: 1.636923076923077, keys min: 2, avg: 12, max: 37
+Avg time WyHash, 17.735835835835836: total elements: 999, unique elements: 532, collisions: 1.0, collisions % 512: 1.636923076923077, keys min: 2, avg: 12, max: 37
+Avg time Default, 16.716816816816817: total elements: 999, unique elements: 208, collisions: 1.0, collisions % 512: 1.2606060606060605, keys min: 2, avg: 6, max: 18
+Avg time FxHasher, 17.642342342342342: total elements: 999, unique elements: 208, collisions: 1.0, collisions % 512: 1.2606060606060605, keys min: 2, avg: 6, max: 18
+Avg time AHasher, 16.40915915915916: total elements: 999, unique elements: 208, collisions: 1.0, collisions % 512: 1.1954022988505748, keys min: 2, avg: 6, max: 18
+Avg time WyHash, 17.5506006006006: total elements: 999, unique elements: 208, collisions: 1.0, collisions % 512: 1.1751412429378532, keys min: 2, avg: 6, max: 18
+Avg time Default, 126.03: total elements: 10, unique elements: 10, collisions: 1.0, collisions % 512: 1.0, keys min: 378, avg: 499, max: 558
+Avg time FxHasher, 93.1: total elements: 10, unique elements: 10, collisions: 1.0, collisions % 512: 1.0, keys min: 378, avg: 499, max: 558
+Avg time AHasher, 48.14: total elements: 10, unique elements: 10, collisions: 1.0, collisions % 512: 1.0, keys min: 378, avg: 499, max: 558
+Avg time WyHash, 43.175: total elements: 10, unique elements: 10, collisions: 1.0, collisions % 512: 1.0, keys min: 378, avg: 499, max: 558
+Avg time Default, 22.654658385093168: total elements: 161, unique elements: 143, collisions: 1.0, collisions % 512: 1.125984251968504, keys min: 8, avg: 22, max: 43
+Avg time FxHasher, 20.537888198757763: total elements: 161, unique elements: 143, collisions: 1.0, collisions % 512: 1.1916666666666667, keys min: 8, avg: 22, max: 43
+Avg time AHasher, 17.930124223602483: total elements: 161, unique elements: 143, collisions: 1.0, collisions % 512: 1.1349206349206349, keys min: 8, avg: 22, max: 43
+Avg time WyHash, 19.022360248447203: total elements: 161, unique elements: 143, collisions: 1.0, collisions % 512: 1.1349206349206349, keys min: 8, avg: 22, max: 43
+```
+
 ## Benchmark HashMap
 
 This repository also contains a simple HashMap implementation, which allows key to be of type String and value to conform with CollectionElement trait.
