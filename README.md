@@ -174,6 +174,8 @@ std_Hash64 avg hash compute 113.35403726708074 | hash colision 1.0 | hash colisi
 
 ### Rust benchmarks results:
 
+CPU Specs: 11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz
+
 ```
 Avg time Default, 16.622: total elements: 100, unique elements: 82, collisions: 1.0, collisions % 512: 1.0649350649350648, keys min: 2, avg: 6, max: 12
 Avg time FxHasher, 17.769000000000002: total elements: 100, unique elements: 82, collisions: 1.0, collisions % 512: 1.0933333333333333, keys min: 2, avg: 6, max: 12
