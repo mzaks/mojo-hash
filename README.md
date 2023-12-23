@@ -268,6 +268,25 @@ Avg time: 70.0, total elements: 10, unique elements: 10, collisions: 1.0, collis
 Avg time: 75.77639751552795, total elements: 161, unique elements: 143, collisions: 1.0, collisions % 512: 1.125984251968504, keys min: 8, avg: 22.6013986013986, max: 43
 ```
 
+**NodeJS**
+
+```
+Avg time WyHash: 5024.798, total elements: 100, unique elements: 82, collisions: 1, collisions % 512: 1.0512820512820513, keys min: 2, avg: 6.012195121951219, max: 12
+Avg time xxHash: 6870.5885, total elements: 100, unique elements: 82, collisions: 1, collisions % 512: 1.0933333333333333, keys min: 2, avg: 6.012195121951219, max: 12
+Avg time WyHash: 3688.6434934934937, total elements: 999, unique elements: 203, collisions: 1, collisions % 512: 1.26875, keys min: 1, avg: 5.862068965517241, max: 14
+Avg time xxHash: 4461.4131131131135, total elements: 999, unique elements: 203, collisions: 1, collisions % 512: 1.180232558139535, keys min: 1, avg: 5.862068965517241, max: 14
+Avg time WyHash: 3393.779079079079, total elements: 999, unique elements: 192, collisions: 1, collisions % 512: 1.1566265060240963, keys min: 1, avg: 5.385416666666667, max: 13
+Avg time xxHash: 4050.333833833834, total elements: 999, unique elements: 192, collisions: 1, collisions % 512: 1.1497005988023952, keys min: 1, avg: 5.385416666666667, max: 13
+Avg time WyHash: 4635.906556556557, total elements: 999, unique elements: 532, collisions: 1, collisions % 512: 1.6269113149847094, keys min: 1, avg: 6.593984962406015, max: 19
+Avg time xxHash: 5929.1773773773775, total elements: 999, unique elements: 532, collisions: 1, collisions % 512: 1.5880597014925373, keys min: 1, avg: 6.593984962406015, max: 19
+Avg time WyHash: 3601.807957957958, total elements: 999, unique elements: 208, collisions: 1, collisions % 512: 1.2093023255813953, keys min: 1, avg: 6.394230769230769, max: 18
+Avg time xxHash: 4370.727527527527, total elements: 999, unique elements: 208, collisions: 1, collisions % 512: 1.2682926829268293, keys min: 1, avg: 6.394230769230769, max: 18
+Avg time WyHash: 94997.88, total elements: 10, unique elements: 10, collisions: 1, collisions % 512: 1, keys min: 130, avg: 171.4, max: 192
+Avg time xxHash: 48261.055, total elements: 10, unique elements: 10, collisions: 1, collisions % 512: 1, keys min: 130, avg: 171.4, max: 192
+Avg time WyHash: 6467.241304347826, total elements: 161, unique elements: 143, collisions: 1, collisions % 512: 1.0916030534351144, keys min: 8, avg: 22.6013986013986, max: 43
+Avg time xxHash: 5186.903105590062, total elements: 161, unique elements: 143, collisions: 1, collisions % 512: 1.1349206349206349, keys min: 8, avg: 22.6013986013986, max: 43
+```
+
 ## Benchmark HashMap
 
 This repository also contains a simple HashMap implementation, which allows key to be of type String and value to conform with CollectionElement trait.

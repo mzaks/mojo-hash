@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "wyhash": "1.0.0",
+    "xxhashjs": "0.2.2"
+  }
+}
