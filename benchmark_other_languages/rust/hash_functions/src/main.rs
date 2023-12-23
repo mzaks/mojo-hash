@@ -41,7 +41,7 @@ fn test_hashing<T: Hasher + Default>(corpus: &Vec<&str>, name: &str) {
     }
     let avg = sum / k.len();
     
-    println!("Avg time {}, {:?}: total elements: {:?}, unique elements: {:?}, collisions: {:?}, collisions % 512: {:?}, keys min: {:?}, avg: {:?}, max: {:?}", name, ((total as f64) / 20.0) / (corpus.len() as f64), corpus.len(), k.len(), (k.len() as f64) / (v.len() as f64), (k.len() as f64) / (v512.len() as f64), min, avg, max);
+    println!("Avg time {}: {:?}, total elements: {:?}, unique elements: {:?}, collisions: {:?}, collisions % 512: {:?}, keys min: {:?}, avg: {:?}, max: {:?}", name, ((total as f64) / 20.0) / (corpus.len() as f64), corpus.len(), k.len(), (k.len() as f64) / (v.len() as f64), (k.len() as f64) / (v512.len() as f64), min, avg, max);
 }
 
 fn main() {

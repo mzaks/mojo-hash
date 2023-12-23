@@ -172,9 +172,11 @@ std_Hash64 avg hash compute 113.35403726708074 | hash colision 1.0 | hash colisi
 
 ![Hash functions benchmark chart](images/hash_functions.png)
 
-### Rust benchmarks results:
+### Other languages benchmarks results:
 
-CPU Specs: 11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz
+#### CPU Specs: 11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz
+
+**Rust**
 
 ```
 Avg time Default, 16.622: total elements: 100, unique elements: 82, collisions: 1.0, collisions % 512: 1.0649350649350648, keys min: 2, avg: 6, max: 12
@@ -205,6 +207,65 @@ Avg time Default, 22.654658385093168: total elements: 161, unique elements: 143,
 Avg time FxHasher, 20.537888198757763: total elements: 161, unique elements: 143, collisions: 1.0, collisions % 512: 1.1916666666666667, keys min: 8, avg: 22, max: 43
 Avg time AHasher, 17.930124223602483: total elements: 161, unique elements: 143, collisions: 1.0, collisions % 512: 1.1349206349206349, keys min: 8, avg: 22, max: 43
 Avg time WyHash, 19.022360248447203: total elements: 161, unique elements: 143, collisions: 1.0, collisions % 512: 1.1349206349206349, keys min: 8, avg: 22, max: 43
+```
+
+#### MacMini M1, 2020
+
+**Rust**
+
+```
+Avg time Default, 26.552: total elements: 100, unique elements: 82, collisions: 1.0, collisions % 512: 1.0649350649350648, keys min: 2, avg: 6, max: 12
+Avg time FxHasher, 25.7875: total elements: 100, unique elements: 82, collisions: 1.0, collisions % 512: 1.0933333333333333, keys min: 2, avg: 6, max: 12
+Avg time AHasher, 26.688499999999998: total elements: 100, unique elements: 82, collisions: 1.0, collisions % 512: 1.1549295774647887, keys min: 2, avg: 6, max: 12
+Avg time WyHash, 27.168499999999998: total elements: 100, unique elements: 82, collisions: 1.0, collisions % 512: 1.0933333333333333, keys min: 2, avg: 6, max: 12
+Avg time Default, 30.68533533533534: total elements: 999, unique elements: 203, collisions: 1.0, collisions % 512: 1.1871345029239766, keys min: 1, avg: 5, max: 14
+Avg time FxHasher, 32.62207207207207: total elements: 999, unique elements: 203, collisions: 1.0, collisions % 512: 1.2083333333333333, keys min: 1, avg: 5, max: 14
+Avg time AHasher, 30.133333333333333: total elements: 999, unique elements: 203, collisions: 1.0, collisions % 512: 1.26875, keys min: 1, avg: 5, max: 14
+Avg time WyHash, 30.666916916916918: total elements: 999, unique elements: 203, collisions: 1.0, collisions % 512: 1.2083333333333333, keys min: 1, avg: 5, max: 14
+Avg time Default, 28.71331331331331: total elements: 999, unique elements: 192, collisions: 1.0, collisions % 512: 1.238709677419355, keys min: 1, avg: 5, max: 13
+Avg time FxHasher, 25.97787787787788: total elements: 999, unique elements: 192, collisions: 1.0, collisions % 512: 1.263157894736842, keys min: 1, avg: 5, max: 13
+Avg time AHasher, 26.035535535535537: total elements: 999, unique elements: 192, collisions: 1.0, collisions % 512: 1.238709677419355, keys min: 1, avg: 5, max: 13
+Avg time WyHash, 26.91166166166166: total elements: 999, unique elements: 192, collisions: 1.0, collisions % 512: 1.2075471698113207, keys min: 1, avg: 5, max: 13
+Avg time Default, 24.716066066066066: total elements: 999, unique elements: 532, collisions: 1.0, collisions % 512: 1.5647058823529412, keys min: 2, avg: 12, max: 37
+Avg time FxHasher, 23.58993993993994: total elements: 999, unique elements: 532, collisions: 1.0, collisions % 512: 1.6419753086419753, keys min: 2, avg: 12, max: 37
+Avg time AHasher, 23.47817817817818: total elements: 999, unique elements: 532, collisions: 1.0, collisions % 512: 1.6269113149847094, keys min: 2, avg: 12, max: 37
+Avg time WyHash, 21.5007007007007: total elements: 999, unique elements: 532, collisions: 1.0, collisions % 512: 1.636923076923077, keys min: 2, avg: 12, max: 37
+Avg time Default, 21.82362362362362: total elements: 999, unique elements: 208, collisions: 1.0, collisions % 512: 1.2606060606060605, keys min: 2, avg: 6, max: 18
+Avg time FxHasher, 21.375575575575578: total elements: 999, unique elements: 208, collisions: 1.0, collisions % 512: 1.2606060606060605, keys min: 2, avg: 6, max: 18
+Avg time AHasher, 20.11911911911912: total elements: 999, unique elements: 208, collisions: 1.0, collisions % 512: 1.2455089820359282, keys min: 2, avg: 6, max: 18
+Avg time WyHash, 20.31836836836837: total elements: 999, unique elements: 208, collisions: 1.0, collisions % 512: 1.1751412429378532, keys min: 2, avg: 6, max: 18
+Avg time Default, 181.005: total elements: 10, unique elements: 10, collisions: 1.0, collisions % 512: 1.0, keys min: 378, avg: 499, max: 558
+Avg time FxHasher, 122.93499999999999: total elements: 10, unique elements: 10, collisions: 1.0, collisions % 512: 1.0, keys min: 378, avg: 499, max: 558
+Avg time AHasher, 45.04: total elements: 10, unique elements: 10, collisions: 1.0, collisions % 512: 1.0, keys min: 378, avg: 499, max: 558
+Avg time WyHash, 31.005000000000003: total elements: 10, unique elements: 10, collisions: 1.0, collisions % 512: 1.0, keys min: 378, avg: 499, max: 558
+Avg time Default, 21.469254658385093: total elements: 161, unique elements: 143, collisions: 1.0, collisions % 512: 1.125984251968504, keys min: 8, avg: 22, max: 43
+Avg time FxHasher, 20.225155279503106: total elements: 161, unique elements: 143, collisions: 1.0, collisions % 512: 1.1916666666666667, keys min: 8, avg: 22, max: 43
+Avg time AHasher, 20.106832298136645: total elements: 161, unique elements: 143, collisions: 1.0, collisions % 512: 1.125984251968504, keys min: 8, avg: 22, max: 43
+Avg time WyHash, 19.890993788819873: total elements: 161, unique elements: 143, collisions: 1.0, collisions % 512: 1.1349206349206349, keys min: 8, avg: 22, max: 43
+```
+
+**Swift**
+
+```
+Avg time: 85.945, total elements: 100, unique elements: 82, collisions: 1.0, collisions % 512: 1.1388888, keys min: 2, avg: 6, max: 12
+Avg time: 67.80245, total elements: 999, unique elements: 203, collisions: 1.0, collisions % 512: 1.2083334, keys min: 1, avg: 5, max: 14
+Avg time: 65.73403, total elements: 999, unique elements: 192, collisions: 1.0, collisions % 512: 1.2, keys min: 1, avg: 5, max: 13
+Avg time: 240.52744, total elements: 999, unique elements: 532, collisions: 1.0, collisions % 512: 1.4224598, keys min: 1, avg: 6, max: 19
+Avg time: 79.92162, total elements: 999, unique elements: 208, collisions: 1.0, collisions % 512: 1.2163743, keys min: 1, avg: 6, max: 18
+Avg time: 1773.4, total elements: 10, unique elements: 10, collisions: 1.0, collisions % 512: 1.1111112, keys min: 130, avg: 171, max: 192
+Avg time: 140.84721, total elements: 161, unique elements: 143, collisions: 1.0, collisions % 512: 1.0592593, keys min: 8, avg: 22, max: 43
+```
+
+**Python**
+
+```
+Avg time: 76.5, total elements: 100, unique elements: 82, collisions: 1.0, collisions % 512: 1.1232876712328768, keys min: 2, avg: 6.012195121951219, max: 12
+Avg time: 71.52152152152152, total elements: 999, unique elements: 203, collisions: 1.0, collisions % 512: 1.215568862275449, keys min: 1, avg: 5.862068965517241, max: 14
+Avg time: 81.63163163163163, total elements: 999, unique elements: 192, collisions: 1.0, collisions % 512: 1.2, keys min: 1, avg: 5.385416666666667, max: 13
+Avg time: 79.72972972972973, total elements: 999, unique elements: 532, collisions: 1.0, collisions % 512: 1.592814371257485, keys min: 1, avg: 6.593984962406015, max: 19
+Avg time: 78.62862862862863, total elements: 999, unique elements: 208, collisions: 1.0, collisions % 512: 1.2023121387283238, keys min: 1, avg: 6.394230769230769, max: 18
+Avg time: 70.0, total elements: 10, unique elements: 10, collisions: 1.0, collisions % 512: 1.0, keys min: 130, avg: 171.4, max: 192
+Avg time: 75.77639751552795, total elements: 161, unique elements: 143, collisions: 1.0, collisions % 512: 1.125984251968504, keys min: 8, avg: 22.6013986013986, max: 43
 ```
 
 ## Benchmark HashMap
