@@ -287,6 +287,18 @@ Avg time WyHash: 6467.241304347826, total elements: 161, unique elements: 143, c
 Avg time xxHash: 5186.903105590062, total elements: 161, unique elements: 143, collisions: 1, collisions % 512: 1.1349206349206349, keys min: 8, avg: 22.6013986013986, max: 43
 ```
 
+**Go**
+
+```
+Avg time: 56.000000, total elements: 100, unique elements: 82, collisions: 1.000000, collisions mod 512: 1.108108, keys min: 2, avg: 6, max: 12 
+Avg time: 53.353353, total elements: 999, unique elements: 203, collisions: 1.000000, collisions mod 512: 1.230303, keys min: 1, avg: 5, max: 14 
+Avg time: 63.363363, total elements: 999, unique elements: 192, collisions: 1.000000, collisions mod 512: 1.215190, keys min: 1, avg: 5, max: 13 
+Avg time: 57.507508, total elements: 999, unique elements: 532, collisions: 1.000000, collisions mod 512: 1.588060, keys min: 2, avg: 12, max: 37 
+Avg time: 56.156156, total elements: 999, unique elements: 208, collisions: 1.000000, collisions mod 512: 1.238095, keys min: 2, avg: 6, max: 18 
+Avg time: 115.000000, total elements: 10, unique elements: 10, collisions: 1.000000, collisions mod 512: 1.111111, keys min: 378, avg: 499, max: 558 
+Avg time: 59.316770, total elements: 161, unique elements: 143, collisions: 1.000000, collisions mod 512: 1.108527, keys min: 8, avg: 22, max: 43 
+```
+
 ## Benchmark HashMap
 
 This repository also contains a simple HashMap implementation, which allows key to be of type String and value to conform with CollectionElement trait.
