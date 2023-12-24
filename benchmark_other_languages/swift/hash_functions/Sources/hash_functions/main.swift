@@ -8,21 +8,19 @@
 import Foundation
 
 func hash(corpus: [Substring]) {
-    var total: UInt64 = 0
+    var total: Duration = .nanoseconds(0)
     var k = Set<Substring>()
     var v = Set<Int>()
     var v512 = Set<Int>()
     for _ in 0..<20 {
         v.removeAll()
         v512.removeAll()
-        var info = mach_timebase_info()
-        guard mach_timebase_info(&info) == KERN_SUCCESS else { exit(1) }
         for key in corpus {
             k.insert(key)
-            let tik = mach_absolute_time()
+            let tik = ContinuousClock.now
             let h = key.hash
-            let tok = mach_absolute_time()
-            total += (tok - tik) * UInt64(info.numer) / UInt64(info.denom)
+            let tok = ContinuousClock.now
+            total += (tok - tik)
             v.insert(h)
             v512.insert(h % 512)
         }
@@ -40,9 +38,10 @@ func hash(corpus: [Substring]) {
             max = l
         }
     }
-    let avg = sum / k.count
+    let avg = Int(sum / k.count)
+    let avgTimeInNs = ((total / Double(20.0)) / Double(corpus.count)).components.attoseconds / 1_000_000_000
 
-    print("Avg time: \((Float(total) / 20.0) / Float(corpus.count)), total elements: \(corpus.count), unique elements: \(k.count), collisions: \(Float(k.count) / Float(v.count)), collisions % 512: \(Float(k.count) / Float(v512.count)), keys min: \(min), avg: \(avg), max: \(max)")
+    print("Avg time: \(avgTimeInNs), total elements: \(corpus.count), unique elements: \(k.count), collisions: \(Double(k.count) / Double(v.count)), collisions % 512: \(Double(k.count) / Double(v512.count)), keys min: \(min), avg: \(avg), max: \(max)")
 }
 
 
