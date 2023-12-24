@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import Dispatch
 
 func hash(corpus: [Substring]) {
-    var total: Duration = .nanoseconds(0)
+    var total: UInt64 = 0
     var k = Set<Substring>()
     var v = Set<Int>()
     var v512 = Set<Int>()
@@ -17,10 +18,10 @@ func hash(corpus: [Substring]) {
         v512.removeAll()
         for key in corpus {
             k.insert(key)
-            let tik = ContinuousClock.now
+            let tik = DispatchTime.now()
             let h = key.hash
-            let tok = ContinuousClock.now
-            total += (tok - tik)
+            let tok = DispatchTime.now()
+            total += (tok.uptimeNanoseconds - tik.uptimeNanoseconds)
             v.insert(h)
             v512.insert(h % 512)
         }
@@ -39,7 +40,7 @@ func hash(corpus: [Substring]) {
         }
     }
     let avg = Int(sum / k.count)
-    let avgTimeInNs = ((total / Double(20.0)) / Double(corpus.count)).components.attoseconds / 1_000_000_000
+    let avgTimeInNs = ((Double(total) / Double(20.0)) / Double(corpus.count))
 
     print("Avg time: \(avgTimeInNs), total elements: \(corpus.count), unique elements: \(k.count), collisions: \(Double(k.count) / Double(v.count)), collisions % 512: \(Double(k.count) / Double(v512.count)), keys min: \(min), avg: \(avg), max: \(max)")
 }
