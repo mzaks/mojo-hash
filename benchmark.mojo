@@ -1,16 +1,21 @@
 from time import now
 from math import min, max
+from memory.unsafe import bitcast
 from fiby_tree import FibyTree
 from my_utils import int_cmp64, int_to_str64, cmp_str, stsl, int_cmp, int_to_str, corpus1, corpus2, corpus3, corpus4, corpus5, corpus6, corpus7
 from ahasher import ahash
 from wyhasher import wyhash
 from fnv1a import fnv1a64, fnv1a32
 from fxhash import fxhash64, fxhash32
+from md5 import md5_string
 
 @always_inline
 fn std_hash64(s: String) -> UInt64:
     return hash(s._as_ptr(), len(s))
 
+@always_inline
+fn md5_hash(s: String) -> UInt64:
+    return bitcast[DType.uint64, 2](md5_string(s))[0]
 
 fn benchamark[hashfn: fn(String) -> UInt64](corpus: DynamicVector[String], name: StringLiteral):
     # var f = FibyTree[UInt64, int_cmp64, int_to_str64]()
@@ -135,6 +140,7 @@ fn main() raises:
     benchamark32[sample_fxhash32](c1, "fxHash32")
     benchamark[sample_fxhash64](c1, "fxHash64")
     benchamark[std_hash64](c1, "std_Hash64")
+    benchamark[md5_hash](c1, "MD5")
 
     let c2 = corpus2()
     print("\nCorpus 2")
@@ -146,7 +152,8 @@ fn main() raises:
     benchamark32[sample_fxhash32](c2, "fxHash32")
     benchamark[sample_fxhash64](c2, "fxHash64")
     benchamark[std_hash64](c2, "std_Hash64")
-
+    benchamark[md5_hash](c2, "MD5")
+    
     let c3 = corpus3()
     print("\nCorpus 3")
     corpus_details(c3)
@@ -157,6 +164,7 @@ fn main() raises:
     benchamark32[sample_fxhash32](c3, "fxHash32")
     benchamark[sample_fxhash64](c3, "fxHash64")
     benchamark[std_hash64](c3, "std_Hash64")
+    benchamark[md5_hash](c3, "MD5")
 
     let c4 = corpus4()
     print("\nCorpus 4")
@@ -168,6 +176,7 @@ fn main() raises:
     benchamark32[sample_fxhash32](c4, "fxHash32")
     benchamark[sample_fxhash64](c4, "fxHash64")
     benchamark[std_hash64](c4, "std_Hash64")
+    benchamark[md5_hash](c4, "MD5")
 
     let c5 = corpus5()
     print("\nCorpus 5")
@@ -179,6 +188,7 @@ fn main() raises:
     benchamark32[sample_fxhash32](c5, "fxHash32")
     benchamark[sample_fxhash64](c5, "fxHash64")
     benchamark[std_hash64](c5, "std_Hash64")
+    benchamark[md5_hash](c5, "MD5")
 
     let c6 = corpus6()
     print("\nCorpus 6")
@@ -190,6 +200,7 @@ fn main() raises:
     benchamark32[sample_fxhash32](c6, "fxHash32")
     benchamark[sample_fxhash64](c6, "fxHash64")
     benchamark[std_hash64](c6, "std_Hash64")
+    benchamark[md5_hash](c6, "MD5")
 
     let c7 = corpus7()
     print("\nCorpus 7")
@@ -201,3 +212,4 @@ fn main() raises:
     benchamark32[sample_fxhash32](c7, "fxHash32")
     benchamark[sample_fxhash64](c7, "fxHash64")
     benchamark[std_hash64](c7, "std_Hash64")
+    benchamark[md5_hash](c7, "MD5")
