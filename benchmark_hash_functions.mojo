@@ -2,7 +2,7 @@ from time import now
 from math import min, max
 from memory.unsafe import bitcast
 from fiby_tree import FibyTree
-from my_utils import int_cmp64, int_to_str64, cmp_str, stsl, int_cmp, int_to_str, corpus1, corpus2, corpus3, corpus4, corpus5, corpus6, corpus7
+from my_utils import int_cmp64, int_to_str64, cmp_str, stsl, int_cmp, int_to_str, corpus1, corpus2, corpus3, corpus4, corpus5, corpus6, corpus7, corpus8
 from ahasher import ahash
 from wyhasher import wyhash
 from fnv1a import fnv1a64, fnv1a32
@@ -100,6 +100,7 @@ fn benchamark32[hashfn: fn(String) -> UInt32](corpus: DynamicVector[String], nam
 
 fn corpus_details(corpus: DynamicVector[String]):
     let word_count = len(corpus)
+    print(word_count)
     var fs = FibyTree[String, cmp_str, String.__str__]()
     var min_key_size = 10000000
     var max_key_size = 0
@@ -213,3 +214,15 @@ fn main() raises:
     benchamark[sample_fxhash64](c7, "fxHash64")
     benchamark[std_hash64](c7, "std_Hash64")
     benchamark[md5_hash](c7, "MD5")
+
+    let c8 = corpus8()
+    print("\nCorpus 8")
+    corpus_details(c8)
+    benchamark[ahash](c8, "AHash")
+    benchamark[sample_wyhash](c8, "Wyhash")
+    benchamark32[fnv1a32](c8, "fnv1a32")
+    benchamark[fnv1a64](c8, "fnv1a64")
+    benchamark32[sample_fxhash32](c8, "fxHash32")
+    benchamark[sample_fxhash64](c8, "fxHash64")
+    benchamark[std_hash64](c8, "std_Hash64")
+    benchamark[md5_hash](c8, "MD5")

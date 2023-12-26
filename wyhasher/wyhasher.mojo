@@ -4,7 +4,7 @@ from math.math import rotate_bits_right
 
 alias U128 = SIMD[DType.uint64, 2]
 alias U256 = SIMD[DType.uint64, 4]
-# alias default_secret = SIMD[DType.uint64, 4](0xa0761d6478bd642f, 0xe7037ed1a0b428db, 0x8ebc6af09c88c6e3, 0x589965cc75374cc3)
+alias default_secret = SIMD[DType.uint64, 4](0xa0761d6478bd642f, 0xe7037ed1a0b428db, 0x8ebc6af09c88c6e3, 0x589965cc75374cc3)
 
 @always_inline
 fn wymum(inout a: UInt64, inout b: UInt64):
@@ -45,7 +45,7 @@ fn wyr3(p: DTypePointer[DType.uint8], k: Int) -> UInt64:
         | (p.offset(k >> 1).load().cast[DType.uint64]() << 8)
         | p.offset(k - 1).load().cast[DType.uint64]()
 
-fn wyhash(key: String, _seed: UInt64, secret: U256) -> UInt64:
+fn wyhash(key: String, _seed: UInt64, secret: U256 = default_secret) -> UInt64:
     var length = len(key)
     var p = key._as_ptr().bitcast[DType.uint8]()
     var seed = _seed ^wy_mix(_seed ^ secret[0], secret[1])

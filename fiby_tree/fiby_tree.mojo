@@ -13,16 +13,16 @@ struct FibyTree[T: CollectionElement, cmp: fn(a:T, b:T) -> Int, to_str: fn(T) ->
     alias IsSuperset = 7
 
     var elements: DynamicVector[T]
-    var left: DynamicVector[UInt16]
-    var right: DynamicVector[UInt16]
+    var left: DynamicVector[UInt32]
+    var right: DynamicVector[UInt32]
     var deleted: Int
-    var max_depth: UInt16
+    var max_depth: UInt32
     var balanced: Bool
     
     fn __init__(inout self):
         self.elements = DynamicVector[T]()
-        self.left = DynamicVector[UInt16]()
-        self.right = DynamicVector[UInt16]()
+        self.left = DynamicVector[UInt32]()
+        self.right = DynamicVector[UInt32]()
         self.deleted = 0
         self.max_depth = 0
         self.balanced = False
@@ -40,11 +40,11 @@ struct FibyTree[T: CollectionElement, cmp: fn(a:T, b:T) -> Int, to_str: fn(T) ->
         self.balanced = existing.balanced
     
     @always_inline("nodebug")
-    fn has_left(self, parent: UInt16) -> Bool:
+    fn has_left(self, parent: UInt32) -> Bool:
         return (self.left[parent.to_int()] != parent).__bool__()
 
     @always_inline("nodebug")
-    fn has_right(self, parent: UInt16) -> Bool:
+    fn has_right(self, parent: UInt32) -> Bool:
         return (self.right[parent.to_int()] != parent).__bool__()
         
     fn add(inout self, element: T):
@@ -53,7 +53,7 @@ struct FibyTree[T: CollectionElement, cmp: fn(a:T, b:T) -> Int, to_str: fn(T) ->
             self._set_max_depth(1)
             return
         var parent = 0
-        var depth: UInt16 = 1
+        var depth: UInt32 = 1
         while True:
             let diff = cmp(self.elements[parent], element)
             if diff == 0:
@@ -80,12 +80,12 @@ struct FibyTree[T: CollectionElement, cmp: fn(a:T, b:T) -> Int, to_str: fn(T) ->
             self.balance()
     
     @always_inline("nodebug")
-    fn _set_max_depth(inout self, candidate: UInt16):
+    fn _set_max_depth(inout self, candidate: UInt32):
         if self.max_depth < candidate:
             self.max_depth = candidate
     
-    fn _optimal_depth(self) -> UInt16:
-        return bit_length(UInt16(self.__len__()))
+    fn _optimal_depth(self) -> UInt32:
+        return bit_length(UInt32(self.__len__()))
     
     @always_inline("nodebug")
     fn _set_root(inout self, element: T):
@@ -101,7 +101,7 @@ struct FibyTree[T: CollectionElement, cmp: fn(a:T, b:T) -> Int, to_str: fn(T) ->
                 self.deleted -= 1
            
     @always_inline("nodebug")
-    fn _add_left(inout self, parent: UInt16, element: T):
+    fn _add_left(inout self, parent: UInt32, element: T):
         let index = len(self.elements)
         self.elements.push_back(element)
         self.left.push_back(index)
@@ -109,7 +109,7 @@ struct FibyTree[T: CollectionElement, cmp: fn(a:T, b:T) -> Int, to_str: fn(T) ->
         self.left[parent.to_int()] = index
     
     @always_inline("nodebug")
-    fn _add_right(inout self, parent: UInt16, element: T):
+    fn _add_right(inout self, parent: UInt32, element: T):
         let index = len(self.elements)
         self.elements.push_back(element)
         self.left.push_back(index)
@@ -178,8 +178,8 @@ struct FibyTree[T: CollectionElement, cmp: fn(a:T, b:T) -> Int, to_str: fn(T) ->
         var result = DynamicVector[T](number_of_elements)
         if number_of_elements == 0:
             return result
-        var stack = DynamicVector[UInt16](self.max_depth.to_int())
-        var current: UInt16 = 0
+        var stack = DynamicVector[UInt32](self.max_depth.to_int())
+        var current: UInt32 = 0
         while len(result) < number_of_elements:
             if len(result) == 0 or cmp(result[len(result) - 1], self.elements[self.left[current.to_int()].to_int()]) < 0:
                 while self.has_left(current):
@@ -296,10 +296,10 @@ struct FibyTree[T: CollectionElement, cmp: fn(a:T, b:T) -> Int, to_str: fn(T) ->
         # assert(num1 > 0)
         # assert(num2 > 0)
         var combined = DynamicVector[T](num1 + num2)
-        var cur1: UInt16 = 0
-        var cur2: UInt16 = 0
-        var stack1 = DynamicVector[UInt16](self.max_depth.to_int())
-        var stack2 = DynamicVector[UInt16](other.max_depth.to_int())
+        var cur1: UInt32 = 0
+        var cur2: UInt32 = 0
+        var stack1 = DynamicVector[UInt32](self.max_depth.to_int())
+        var stack2 = DynamicVector[UInt32](other.max_depth.to_int())
         var last_returned1 = DynamicVector[T](1)
         var last_returned2 = DynamicVector[T](1)
         var e1 = self._sorted_iter(cur1, stack1, last_returned1)
@@ -425,10 +425,10 @@ struct FibyTree[T: CollectionElement, cmp: fn(a:T, b:T) -> Int, to_str: fn(T) ->
             if num1 == 0 or num2 == 0:
                 return True
 
-        var cur1: UInt16 = 0
-        var cur2: UInt16 = 0
-        var stack1 = DynamicVector[UInt16](self.max_depth.to_int())
-        var stack2 = DynamicVector[UInt16](other.max_depth.to_int())
+        var cur1: UInt32 = 0
+        var cur2: UInt32 = 0
+        var stack1 = DynamicVector[UInt32](self.max_depth.to_int())
+        var stack2 = DynamicVector[UInt32](other.max_depth.to_int())
         var last_returned1 = DynamicVector[T](1)
         var last_returned2 = DynamicVector[T](1)
         var e1 = self._sorted_iter(cur1, stack1, last_returned1)
@@ -497,7 +497,7 @@ struct FibyTree[T: CollectionElement, cmp: fn(a:T, b:T) -> Int, to_str: fn(T) ->
         return False
     
     @always_inline("nodebug")
-    fn _sorted_iter(self, inout current: UInt16, inout stack: DynamicVector[UInt16], inout last_returned: DynamicVector[T]) -> T:
+    fn _sorted_iter(self, inout current: UInt32, inout stack: DynamicVector[UInt32], inout last_returned: DynamicVector[T]) -> T:
         # using UnsafeFixedVector[T](1) as poor mans Optional for last_returned
         if len(last_returned) == 0 or cmp(last_returned[0], self.elements[self.left[current.to_int()].to_int()]) < 0:
             while self.has_left(current):
@@ -580,7 +580,7 @@ struct FibyTree[T: CollectionElement, cmp: fn(a:T, b:T) -> Int, to_str: fn(T) ->
         return cand.to_int()
         
     
-    fn _swap_with_next_smaller_leaf(inout self, index: UInt16) -> Bool:
+    fn _swap_with_next_smaller_leaf(inout self, index: UInt32) -> Bool:
         var parent = index
         var candidate = self.left[index.to_int()]
         if candidate == index:
@@ -601,7 +601,7 @@ struct FibyTree[T: CollectionElement, cmp: fn(a:T, b:T) -> Int, to_str: fn(T) ->
                 candidate = right
     
     @always_inline("nodebug")
-    fn _is_leaf(self, index: UInt16) -> Bool:
+    fn _is_leaf(self, index: UInt32) -> Bool:
         return (self.left[index.to_int()] == index).__bool__() and (self.right[index.to_int()] == index).__bool__()
     
     @always_inline("nodebug")
@@ -651,13 +651,13 @@ struct FibyTree[T: CollectionElement, cmp: fn(a:T, b:T) -> Int, to_str: fn(T) ->
             i += 1
             self._eytzinger(i, k * 2 + 1, v)
     
-    fn print_tree(self, root: UInt16 = 0):
+    fn print_tree(self, root: UInt32 = 0):
         if self.__len__() == 0:
             print("・")
             return
         self._print("", 0)
     
-    fn _print(self, indentation: String, index: UInt16):
+    fn _print(self, indentation: String, index: UInt32):
         if len(indentation) > 0:
             print(indentation, "-", to_str(self.elements[index.to_int()]))
         else:
