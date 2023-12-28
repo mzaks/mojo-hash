@@ -35,18 +35,45 @@ fn main() raises:
     tok = now()
     print("Std hash:", tok - tik, h4, len(text))
 
-    # @parameter
-    # fn md5_test():
-    #     _ = md5_string(text)
+    var hb = SIMD[DType.uint8, 16]()
 
-    # let report0 = benchmark.run[md5_test]()
-    # report0.print(Unit.ms)
+    @parameter
+    fn md5_test():
+        hb = md5_string(text)
+    print("===MD5===")
+    let report0 = benchmark.run[md5_test]()
+    report0.print(Unit.ns)
+    print(hb)
+    
+    var hi = 0
 
     @parameter
     fn hash_test():
-        _ = hash(text._as_ptr(), len(text))
+        hi = hash(text._as_ptr(), len(text))
 
+    print("===Std hash===")
     let report1 = benchmark.run[hash_test]()
     report1.print(Unit.ns)
+    print(hi)
+
+    var hu = UInt64(0)
+
+    @parameter
+    fn ahash_test():
+        hu = ahash(text)
+
+    print("===Ahash===")
+    let report2 = benchmark.run[ahash_test]()
+    report2.print(Unit.ns)
+    print(hu)
+
+    @parameter
+    fn wyhash_test():
+        hu = wyhash(text, 0)
+
+    print("===Wyhash===")
+    let report3 = benchmark.run[wyhash_test]()
+    report3.print(Unit.ns)
+    print(hu)
     
     _ = text

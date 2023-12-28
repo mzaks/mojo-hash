@@ -39,6 +39,7 @@ fn create_padding() -> DTypePointer[DType.uint8]:
         result.store(i, 0)
     return result
 
+@always_inline
 fn rotate_left(v: UInt32, r: UInt32) -> UInt32:
     return (v << r) | (v >> (32 - r)) 
 
@@ -54,6 +55,7 @@ struct Md5Context:
         self.input = SIMD[DType.uint8, 64]()
         self.digest = SIMD[DType.uint8, 16]()
 
+    @always_inline
     fn update(inout self, input_buffer: DTypePointer[DType.uint8], length: Int):
         var offset = (self.size & 63).to_int()
         var input = SIMD[DType.uint32, 16]()
@@ -67,7 +69,8 @@ struct Md5Context:
                 input = bitcast[DType.uint32, 16](self.input)
                 self.step(input)
                 offset = 0
-
+    
+    @always_inline
     fn finalize(owned self) -> SIMD[DType.uint8, 16]:
         var input = SIMD[DType.uint32, 16]()
         let offset = (self.size & 63).to_int()
@@ -81,7 +84,7 @@ struct Md5Context:
         self.step(input)
         return bitcast[DType.uint8, 16](self.buffer)
 
-
+    @always_inline
     fn step(inout self, input: SIMD[DType.uint32, 16]):
         var aa = self.buffer[0]
         var bb = self.buffer[1]
@@ -115,6 +118,7 @@ struct Md5Context:
 
         self.buffer += SIMD[DType.uint32, 4](aa, bb, cc, dd)
 
+@always_inline
 fn md5_string(value: String) -> SIMD[DType.uint8, 16]:
     var ctx = Md5Context()
     ctx.update(value._as_ptr().bitcast[DType.uint8](), len(value))
