@@ -4,7 +4,18 @@ from math.math import rotate_bits_right
 
 alias U128 = SIMD[DType.uint64, 2]
 alias U256 = SIMD[DType.uint64, 4]
-alias default_secret = SIMD[DType.uint64, 4](0xa0761d6478bd642f, 0xe7037ed1a0b428db, 0x8ebc6af09c88c6e3, 0x589965cc75374cc3)
+alias default_secret = SIMD[DType.uint64, 4](0x2d358dccaa6c78a5, 0x8bb84b93962eacc9, 0x4b33a62ed433d4a3, 0x4d5a2da51de1aa47)
+
+@always_inline
+fn wymum_32(inout a: UInt64, inout b: UInt64):
+    let ab = U128(a, b)
+    let abl = ab & 0xff_ff_ff_ff
+    let abh = ab >> 32
+    let hh = abh.reduce_mul()
+    let hl = abh[0] * abl[1]
+    let ll = abl.reduce_mul()
+    let lh = abl[0] * abh[1]
+    a, b = rotate_bits_right[32](hl) ^ hh, rotate_bits_right[32](lh) ^ ll
 
 @always_inline
 fn wymum(inout a: UInt64, inout b: UInt64):
@@ -15,8 +26,12 @@ fn wymum(inout a: UInt64, inout b: UInt64):
     let hl = abh[0] * abl[1]
     let ll = abl.reduce_mul()
     let lh = abl[0] * abh[1]
-    a = rotate_bits_right[32](hl) ^ hh
-    b = rotate_bits_right[32](lh) ^ ll
+    let t = ll + (hl << 32)
+    let lo = t + (lh << 32)
+    var c = (t < ll).cast[DType.uint64]()
+    c += (lo < t).cast[DType.uint64]()
+    let hi = hh + (hl >> 32) + (lh >> 32) + c
+    a, b = lo, hi
 
 @always_inline
 fn wy_mix(_a: UInt64, _b: UInt64) -> UInt64:
@@ -24,12 +39,6 @@ fn wy_mix(_a: UInt64, _b: UInt64) -> UInt64:
     var b = _b
     wymum(a, b)
     return a ^ b
-
-@always_inline
-fn folded_multiply(s: UInt64, by: UInt64) -> UInt64:
-    let b1 = s * bswap(by)
-    let b2 = bswap(s) * (~by)
-    return b1 ^ bswap(b2)
 
 @always_inline
 fn wyr8(p: DTypePointer[DType.uint8]) -> UInt64:

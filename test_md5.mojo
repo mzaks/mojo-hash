@@ -1,5 +1,7 @@
 from md5 import md5_string
 from testing import assert_equal
+from wyhasher import wyhash
+from wyhasher.wyhasher import wymum
 
 alias alphabete: String = "0123456789abcdef"
 

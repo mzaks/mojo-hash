@@ -1,8 +1,8 @@
-use std::{collections::{HashSet, hash_map::DefaultHasher}, vec};
+use std::{collections::{HashSet, hash_map::DefaultHasher}, vec, fs};
 use std::hash::{Hash, Hasher};
 use ahash::AHasher;
 use fxhash::FxHasher64;
-use wyhash2::WyHash;
+use wyhash2::{WyHash, wyhash_single};
 use std::time::Instant;
 
 
@@ -44,6 +44,24 @@ fn test_hashing<T: Hasher + Default>(corpus: &Vec<&str>, name: &str) {
     println!("Avg time {}: {:?}, total elements: {:?}, unique elements: {:?}, collisions: {:?}, collisions % 512: {:?}, keys min: {:?}, avg: {:?}, max: {:?}", name, ((total as f64) / 20.0) / (corpus.len() as f64), corpus.len(), k.len(), (k.len() as f64) / (v.len() as f64), (k.len() as f64) / (v512.len() as f64), min, avg, max);
 }
 
+fn test_md5(corpus: &Vec<&str>) {
+    let mut total = 0;
+    let mut k = HashSet::new();
+    let mut v = HashSet::new();
+    for _ in 0..20 {
+        v.clear();
+        corpus.iter().for_each(|key| {
+            k.insert(key);
+            let tik = Instant::now();
+            let hash = md5::compute(key);
+            let tok = Instant::now();
+            total += (tok - tik).as_nanos();
+            v.insert(hash);
+        });
+    }
+    println!("Avg time MD5: {:?}", ((total as f64) / 20.0) / (corpus.len() as f64))
+}
+
 fn main() {
     let corpus1 = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci urna, pretium et porta ac, porttitor sit amet sem. Fusce sagittis lorem neque, vitae sollicitudin elit suscipit et. In interdum convallis nisl in ornare. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Aliquam erat volutpat. Morbi mollis iaculis lectus ac tincidunt. Fusce nisi lacus, semper eu dignissim et, malesuada non mi. Sed euismod urna vel elit faucibus, eu bibendum ante fringilla. Curabitur tempus in turpis at mattis. Aliquam erat volutpat. Donec maximus elementum felis, sit amet dignissim augue tincidunt blandit. Aliquam fermentum, est eu mollis.".split(" ").collect::<Vec<&str>>();
     let corpus2 = "But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure? On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire, that they cannot foresee the pain and trouble that are bound to ensue; and equal blame belongs to those who fail in their duty through weakness of will, which is the same as saying through shrinking from toil and pain. These cases are perfectly simple and easy to distinguish. In a free hour, when our power of choice is untrammelled and when nothing prevents our being able to do what we like best, every pleasure is to be welcomed and every pain avoided. But in certain circumstances and owing to the claims of duty or the obligations of business it will frequently occur that pleasures have to be repudiated and annoyances accepted. The wise man therefore always holds in these matters to this principle of selection: he rejects pleasures to secure other greater pleasures, or else he endures pains to avoid worse pains. But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure? On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire, that they cannot foresee the pain and trouble that are bound to ensue; and equal blame belongs to those who fail in their duty through weakness of will, which is the same as saying through shrinking from toil and pain. These cases are perfectly simple and easy to distinguish. In a free hour, when our power of choice is untrammelled and when nothing prevents our being able to do what we like best, every pleasure is to be welcomed and every pain avoided. But in certain circumstances and owing to the claims of duty or the obligations of business it will frequently occur that pleasures have to be repudiated and annoyances accepted. The wise man therefore always holds in these matters to this principle of selection: he rejects pleasures to secure other greater pleasures, or else he endures pains to avoid worse pains.But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure? On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire, that they cannot foresee the pain and trouble that are bound to ensue; and equal blame belongs to those who fail in their duty through weakness of will, which is the same as saying through shrinking from toil and pain. These cases are perfectly simple and easy to distinguish. In a free hour, when our power of choice is untrammelled and when nothing prevents our being able to do what we like best, every pleasure is to be welcomed and every pain avoided. But in certain circumstances and owing to the claims of duty or the obligations of business it will frequently occur that pleasures have to be repudiated and annoyances accepted. The wise man therefore always holds in these matters to this principle of selection:".split(" ").collect::<Vec<&str>>();
@@ -60,5 +78,23 @@ fn main() {
         test_hashing::<FxHasher64>(&corpus, "FxHasher");
         test_hashing::<AHasher>(&corpus, "AHasher");
         test_hashing::<WyHash>(&corpus, "WyHash");
+        test_md5(&corpus);
     }
+
+    let contents = fs::read_to_string("/usr/share/dict/words")
+        .expect("Should have been able to read the file");
+    
+    let tik = Instant::now();
+    let hash = md5::compute(contents);
+    let tok = Instant::now();
+
+    println!("MD5: {:?}", hash);
+    println!("In {:?}", (tok - tik).as_nanos());
+    
+    // let hash = wyhash_single(b"Maxim", 0);
+    // println!("{:?}: {:?}", "Maxim", hash);
+
+    let mut hasher = AHasher::default();
+    hasher.write(b"Maxim");
+    println!("Maxim: {}", hasher.finish());
 }

@@ -3,6 +3,7 @@
 from algorithm.functional import unroll
 from memory.unsafe import bitcast
 from memory import memset_zero
+from math import rotate_bits_left
 
 alias S = SIMD[DType.uint32, 64](
     7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22,
@@ -38,10 +39,6 @@ fn create_padding() -> DTypePointer[DType.uint8]:
     for i in range(1, 64):
         result.store(i, 0)
     return result
-
-@always_inline
-fn rotate_left(v: UInt32, r: UInt32) -> UInt32:
-    return (v << r) | (v >> (32 - r)) 
 
 struct Md5Context:
     var buffer: SIMD[DType.uint32, 4]
@@ -110,9 +107,7 @@ struct Md5Context:
             else:
                 e = cc ^ (bb | ~dd)
                 j = (i * 7) & 15
-            # IMHO this does not work because of a compiler bug            
-            # aa, bb, cc, dd = dd, bb + (aa + e + K[i] + input[j]).rotate_left[S[i].to_int()](), bb, cc
-            aa, bb, cc, dd = dd, bb + rotate_left(aa + e + K[i] + input[j], S[i]), bb, cc
+            aa, bb, cc, dd = dd, bb + rotate_bits_left[S[i].to_int()](aa + e + K[i] + input[j]), bb, cc
         
         unroll[64, shuffle]()
 

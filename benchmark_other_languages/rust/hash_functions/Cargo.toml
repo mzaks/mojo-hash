@@ -8,8 +8,9 @@ edition = "2021"
 [dependencies]
 rand = "0.8.5"
 fxhash = "0.2.1"
-ahash = "0.8.3"
+ahash = "0.8.6"
 wyhash2 = "0.2.1"
+md5 = "0.7.0"
 
 [profile.dev]
 opt-level = 3

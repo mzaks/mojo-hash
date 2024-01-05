@@ -1,3 +1,6 @@
 {
-    "mojo.modularHomePath": "/Users/mzaks/.modular"
+    "mojo.modularHomePath": "/Users/mzaks/.modular",
+    "files.associations": {
+        "iostream": "cpp"
+    }
 }
