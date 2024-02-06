@@ -1,1 +1,1 @@
-from .hashmap import HashMapDict
+from .hashmap4 import HashMapDict

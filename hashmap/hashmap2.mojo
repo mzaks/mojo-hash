@@ -1,17 +1,25 @@
+from math.bit import bit_length, ctpop
 from memory import memset_zero, memcpy
 
 struct HashMapDict[V: CollectionElement, hash: fn(String) -> UInt64]:
     var keys: DynamicVector[String]
+    var key_hashes: DynamicVector[UInt64]
     var values: DynamicVector[V]
     var key_map: DTypePointer[DType.uint32]
     var deleted_mask: DTypePointer[DType.uint8]
     var count: Int
     var capacity: Int
 
-    fn __init__(inout self):
+    fn __init__(inout self, capacity: Int = 16):
         self.count = 0
-        self.capacity = 16
+        if capacity < 4:
+            self.capacity = 4
+        else:
+            var icapacity = Int64(capacity)
+            self.capacity = capacity if ctpop(icapacity) == 1 else
+                            1 << (bit_length(icapacity)).to_int()
         self.keys = DynamicVector[String](self.capacity)
+        self.key_hashes = DynamicVector[UInt64](self.capacity)
         self.values = DynamicVector[V](self.capacity)
         self.key_map = DTypePointer[DType.uint32].alloc(self.capacity)
         self.deleted_mask = DTypePointer[DType.uint8].alloc(self.capacity >> 3)
@@ -22,7 +30,30 @@ struct HashMapDict[V: CollectionElement, hash: fn(String) -> UInt64]:
         if self.count / self.capacity >= 0.8:
             self._rehash()
         
-        self._put(key, value, -1)
+        let key_hash = hash(key)
+        let key_hash_vec = SIMD[DType.uint64, 8](key_hash)
+        let modulo_mask = self.capacity - 1
+        var key_map_index = (key_hash & modulo_mask).to_int()
+        while True:
+            let key_index = self.key_map.offset(key_map_index).load().to_int()
+            if key_index == 0:
+                self.keys.push_back(key)
+                self.key_hashes.push_back(key_hash)
+                self.values.push_back(value)
+                self.count += 1
+                self.key_map.offset(key_map_index).store(UInt32(len(self.keys)))
+                return
+
+            let other_key_hash = self.key_hashes[key_index - 1]
+            let other_key = self.keys[key_index - 1]
+            if other_key_hash == key_hash and other_key == key:
+                self.values[key_index - 1] = value # replace value
+                if self._is_deleted(key_index - 1):
+                    self.count += 1
+                    self._not_deleted(key_index - 1)
+                return
+            
+            key_map_index = (key_map_index + 1) & modulo_mask
     
     @always_inline
     fn _is_deleted(self, index: Int) -> Bool:
@@ -61,48 +92,38 @@ struct HashMapDict[V: CollectionElement, hash: fn(String) -> UInt64]:
         self.deleted_mask.free()
         self.deleted_mask = _deleted_mask
 
-        for i in range(len(self.keys)):
-            self._put(self.keys[i], self.values[i], i + 1)
-
-    @always_inline
-    fn _put(inout self, key: String, value: V, rehash_index: Int):
-        let key_hash = hash(key)
         let modulo_mask = self.capacity - 1
-        var key_map_index = (key_hash & modulo_mask).to_int()
-        while True:
-            let key_index = self.key_map.offset(key_map_index).load().to_int()
-            if key_index == 0:
-                let new_key_index: Int
-                if rehash_index == -1:
-                    self.keys.push_back(key)
-                    self.values.push_back(value)
-                    self.count += 1
-                    new_key_index = len(self.keys)
-                else:
-                    new_key_index = rehash_index
-                self.key_map.offset(key_map_index).store(UInt32(new_key_index))
-                return
+        for i in range(len(self.keys)):
+            let key = self.keys[i]
+            let key_hash = self.key_hashes[i]
+            let key_hash_vec = SIMD[DType.uint64, 4](key_hash)
 
-            let other_key = self.keys[key_index - 1]
-            if other_key == key:
-                self.values[key_index - 1] = value
-                if self._is_deleted(key_index - 1):
-                    self.count += 1
-                    self._not_deleted(key_index - 1)
-                return
-            
-            key_map_index = (key_map_index + 1) & modulo_mask
+            var key_map_index = (key_hash & modulo_mask).to_int()
+
+            var searching = True
+            while searching:
+                let key_index = self.key_map.offset(key_map_index).load().to_int()
+
+                if key_index == 0:
+                    self.key_map.offset(key_map_index).store(UInt32(i) + 1)
+                    searching = False
+                
+                key_map_index = (key_map_index + 1) & modulo_mask    
 
     fn get(self, key: String, default: V) -> V:
         let key_hash = hash(key)
         let modulo_mask = self.capacity - 1
+        let key_hash_vec = SIMD[DType.uint64, 4](key_hash)
+
         var key_map_index = (key_hash & modulo_mask).to_int()
         while True:
             let key_index = self.key_map.offset(key_map_index).load().to_int()
+            
             if key_index == 0:
                 return default
             let other_key = self.keys[key_index - 1]
-            if other_key == key:
+            let other_key_hash = self.key_hashes[key_index - 1]
+            if key_hash == other_key_hash and other_key == key:
                 if self._is_deleted(key_index - 1):
                     return default
                 return self.values[key_index - 1]
@@ -111,16 +132,21 @@ struct HashMapDict[V: CollectionElement, hash: fn(String) -> UInt64]:
     fn delete(inout self, key: String):
         let key_hash = hash(key)
         let modulo_mask = self.capacity - 1
+        let key_hash_vec = SIMD[DType.uint64, 4](key_hash)
+
         var key_map_index = (key_hash & modulo_mask).to_int()
         while True:
             let key_index = self.key_map.offset(key_map_index).load().to_int()
+
             if key_index == 0:
                 return
             let other_key = self.keys[key_index - 1]
-            if other_key == key:
+            let other_key_hash = self.key_hashes[key_index - 1]
+            if key_hash == other_key_hash and other_key == key:
                 self.count -= 1
                 return self._deleted(key_index - 1)
-            key_map_index = (key_map_index + 1) & modulo_mask
+            
+            key_map_index = (key_map_index + 1) & modulo_mask    
 
     fn debug(self):
         print("HashMapDict", "count:", self.count, "capacity:", self.capacity)
