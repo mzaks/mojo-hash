@@ -9,7 +9,7 @@ from benchmark import Unit
 
 
 fn main() raises:
-    let text = Path("/usr/share/dict/words").read_text()
+    var text = Path("/usr/share/dict/words").read_text()
     var tik = now()
     let h0 = md5_string(text)
     var tok = now()

@@ -175,10 +175,10 @@ struct FibyTree[T: CollectionElement, cmp: fn(a:T, b:T) -> Int, to_str: fn(T) ->
     @always_inline("nodebug")
     fn sorted_elements(self) -> DynamicVector[T]:
         let number_of_elements = self.__len__()
-        var result = DynamicVector[T](number_of_elements)
+        var result = DynamicVector[T](capacity=number_of_elements)
         if number_of_elements == 0:
             return result
-        var stack = DynamicVector[UInt32](self.max_depth.to_int())
+        var stack = DynamicVector[UInt32](capacity=self.max_depth.to_int())
         var current: UInt32 = 0
         while len(result) < number_of_elements:
             if len(result) == 0 or cmp(result[len(result) - 1], self.elements[self.left[current.to_int()].to_int()]) < 0:
@@ -295,13 +295,13 @@ struct FibyTree[T: CollectionElement, cmp: fn(a:T, b:T) -> Int, to_str: fn(T) ->
         let num2 = other.__len__()
         # assert(num1 > 0)
         # assert(num2 > 0)
-        var combined = DynamicVector[T](num1 + num2)
+        var combined = DynamicVector[T](capacity=num1 + num2)
         var cur1: UInt32 = 0
         var cur2: UInt32 = 0
-        var stack1 = DynamicVector[UInt32](self.max_depth.to_int())
-        var stack2 = DynamicVector[UInt32](other.max_depth.to_int())
-        var last_returned1 = DynamicVector[T](1)
-        var last_returned2 = DynamicVector[T](1)
+        var stack1 = DynamicVector[UInt32](capacity=self.max_depth.to_int())
+        var stack2 = DynamicVector[UInt32](capacity=other.max_depth.to_int())
+        var last_returned1 = DynamicVector[T](capacity=1)
+        var last_returned2 = DynamicVector[T](capacity=1)
         var e1 = self._sorted_iter(cur1, stack1, last_returned1)
         last_returned1.append(e1)
         var e2 = other._sorted_iter(cur2, stack2, last_returned2)
@@ -427,10 +427,10 @@ struct FibyTree[T: CollectionElement, cmp: fn(a:T, b:T) -> Int, to_str: fn(T) ->
 
         var cur1: UInt32 = 0
         var cur2: UInt32 = 0
-        var stack1 = DynamicVector[UInt32](self.max_depth.to_int())
-        var stack2 = DynamicVector[UInt32](other.max_depth.to_int())
-        var last_returned1 = DynamicVector[T](1)
-        var last_returned2 = DynamicVector[T](1)
+        var stack1 = DynamicVector[UInt32](capacity=self.max_depth.to_int())
+        var stack2 = DynamicVector[UInt32](capacity=other.max_depth.to_int())
+        var last_returned1 = DynamicVector[T](capacity=1)
+        var last_returned2 = DynamicVector[T](capacity=1)
         var e1 = self._sorted_iter(cur1, stack1, last_returned1)
         last_returned1.append(e1)
         var e2 = other._sorted_iter(cur2, stack2, last_returned2)

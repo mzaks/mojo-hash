@@ -11,11 +11,11 @@ fn eq(a: StringRef, b: String) -> Bool:
     var offset = 0
     alias step = 16
     while l - offset >= step:
-        if p1.offset(offset).simd_load[step]() != p2.offset(offset).simd_load[step]():
+        if p1.simd_load[step](offset) != p2.simd_load[step](offset):
             return False
         offset += step
     while l - offset > 0:
-        if p1.offset(offset).load() != p2.offset(offset).load():
+        if p1.load(offset) != p2.load(offset):
             return False
         offset += 1
     return True
@@ -86,8 +86,8 @@ struct HashMapDict[V: CollectionElement, hash: fn(String) -> UInt64]:
             self.capacity = capacity if ctpop(icapacity) == 1 else
                             1 << (bit_length(icapacity)).to_int()
         self.keys = KeysContainer(capacity)
-        self.key_hashes = DynamicVector[UInt64](self.capacity)
-        self.values = DynamicVector[V](self.capacity)
+        self.key_hashes = DynamicVector[UInt64](capacity=self.capacity)
+        self.values = DynamicVector[V](capacity=self.capacity)
         self.key_map = DTypePointer[DType.uint32].alloc(self.capacity)
         self.deleted_mask = DTypePointer[DType.uint8].alloc(self.capacity >> 3)
         memset_zero(self.key_map, self.capacity)

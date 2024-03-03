@@ -24,7 +24,7 @@ fn benchamark[hashfn: fn(String) -> UInt64](corpus: DynamicVector[String], name:
     var min_avg: Float64 = 100000.0
     let mod = (1 << 9)
     var hashes = DynamicVector[UInt64]()
-    var mod_hashes: DynamicVector[UInt64] = 0
+    var mod_hashes: DynamicVector[UInt64] = DynamicVector[UInt64]()
     var total = 0
     for _ in range(20):
         for i in range(len(corpus)):
@@ -63,8 +63,8 @@ fn benchamark32[hashfn: fn(String) -> UInt32](corpus: DynamicVector[String], nam
     var fs = FibyTree[String, cmp_str, String.__str__]()
     var min_avg: Float64 = 100000.0
     let mod = (1 << 9)
-    var hashes: DynamicVector[UInt32] = 0
-    var mod_hashes: DynamicVector[UInt32] = 0
+    var hashes: DynamicVector[UInt32] = DynamicVector[UInt32]()
+    var mod_hashes: DynamicVector[UInt32] = DynamicVector[UInt32]()
     var total = 0
     for _ in range(20):
         for i in range(len(corpus)):

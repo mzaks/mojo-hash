@@ -18,9 +18,9 @@ struct HashMapDict[V: CollectionElement, hash: fn(String) -> UInt64]:
             var icapacity = Int64(capacity)
             self.capacity = capacity if ctpop(icapacity) == 1 else
                             1 << (bit_length(icapacity)).to_int()
-        self.keys = DynamicVector[String](self.capacity)
-        self.key_hashes = DynamicVector[UInt64](self.capacity)
-        self.values = DynamicVector[V](self.capacity)
+        self.keys = DynamicVector[String](capacity=self.capacity)
+        self.key_hashes = DynamicVector[UInt64](capacity=self.capacity)
+        self.values = DynamicVector[V](capacity=self.capacity)
         self.key_map = DTypePointer[DType.uint32].alloc(self.capacity)
         self.deleted_mask = DTypePointer[DType.uint8].alloc(self.capacity >> 3)
         memset_zero(self.key_map, self.capacity)

@@ -11,8 +11,8 @@ struct HashMapDict[V: CollectionElement, hash: fn(String) -> UInt64]:
     fn __init__(inout self):
         self.count = 0
         self.capacity = 16
-        self.keys = DynamicVector[String](self.capacity)
-        self.values = DynamicVector[V](self.capacity)
+        self.keys = DynamicVector[String](capacity=self.capacity)
+        self.values = DynamicVector[V](capacity=self.capacity)
         self.key_map = DTypePointer[DType.uint32].alloc(self.capacity)
         self.deleted_mask = DTypePointer[DType.uint8].alloc(self.capacity >> 3)
         memset_zero(self.key_map, self.capacity)

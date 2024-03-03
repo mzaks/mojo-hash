@@ -109,7 +109,7 @@ struct Md5Context:
                 j = (i * 7) & 15
             aa, bb, cc, dd = dd, bb + rotate_bits_left[S[i].to_int()](aa + e + K[i] + input[j]), bb, cc
         
-        unroll[64, shuffle]()
+        unroll[shuffle, 64]()
 
         self.buffer += SIMD[DType.uint32, 4](aa, bb, cc, dd)
 

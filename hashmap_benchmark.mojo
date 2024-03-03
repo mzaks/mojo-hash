@@ -25,8 +25,8 @@ fn all_corpus() raises -> DynamicVector[DynamicVector[String]]:
     result.push_back(corpus3())
     # Corpus4 charshes the std Dict, bug reported 
     # https://github.com/modularml/mojo/issues/1729
-    # result.push_back(corpus4())
-    result.push_back(corpus5()) # added twice to keep the corpus count correct
+    result.push_back(corpus4())
+    # result.push_back(corpus5()) # added twice to keep the corpus count correct
     result.push_back(corpus5())
     result.push_back(corpus6())
     result.push_back(corpus7())
@@ -84,8 +84,8 @@ struct StringKey(KeyElement):
         self.s = String(s)
 
     fn __hash__(self) -> Int:
-        let ptr = self.s._buffer.data.value
-        return hash(DTypePointer[DType.int8](ptr), len(self.s))
+        let ptr = self.s._as_ptr()
+        return hash(ptr, len(self.s))
 
     fn __eq__(self, other: Self) -> Bool:
         return self.s == other.s
@@ -130,7 +130,7 @@ fn benchamark_std_hash_map() raises:
 
 fn main() raises :
     benchamark_hash_map[ahash]("AHash")
-    benchamark_hash_map[_wyhash]("WyHash")
-    benchamark_hash_map[_fxhash64]("FxHash64")
-    benchamark_hash_map[_std_hash]("StdHash")
-    benchamark_std_hash_map()
+    # benchamark_hash_map[_wyhash]("WyHash")
+    # benchamark_hash_map[_fxhash64]("FxHash64")
+    # benchamark_hash_map[_std_hash]("StdHash")
+    # benchamark_std_hash_map()
