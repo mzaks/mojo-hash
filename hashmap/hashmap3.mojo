@@ -3,7 +3,7 @@ from memory import memset_zero, memcpy
 
 @always_inline
 fn eq(a: String, b: String) -> Bool:
-    let l = len(a)
+    var l = len(a)
     if l != len(b):
         return False
     
@@ -41,15 +41,15 @@ struct HashMapDict[V: CollectionElement, hash: fn(String) -> UInt64]:
         if self.count / self.capacity >= 0.8:
             self._rehash()
         
-        let key_hash = hash(key)
-        let key_hash_vec = SIMD[DType.uint64, 4](key_hash)
-        let modulo_mask = self.capacity - 1
+        var key_hash = hash(key)
+        var key_hash_vec = SIMD[DType.uint64, 4](key_hash)
+        var modulo_mask = self.capacity - 1
         var key_map_indices = (key_hash_vec >> SIMD[DType.uint64, 4](0, 8, 16 , 24)) & modulo_mask
         while True:
             @unroll
             for lane in range(4):
-                let key_map_index = key_map_indices[lane]
-                let key_index = self.key_map.offset(key_map_indices[lane]).load().to_int()
+                var key_map_index = key_map_indices[lane]
+                var key_index = self.key_map.offset(key_map_indices[lane]).load().to_int()
                 if key_index == 0:
                     self.keys.push_back(key)
                     self.key_hashes.push_back(key_hash)
@@ -58,8 +58,8 @@ struct HashMapDict[V: CollectionElement, hash: fn(String) -> UInt64]:
                     self.key_map.offset(key_map_index).store(UInt32(len(self.keys)))
                     return
 
-                let other_key_hash = self.key_hashes[key_index - 1]
-                let other_key = self.keys[key_index - 1]
+                var other_key_hash = self.key_hashes[key_index - 1]
+                var other_key = self.keys[key_index - 1]
                 if other_key_hash == key_hash and eq(other_key, key):
                     self.values[key_index - 1] = value # replace value
                     if self._is_deleted(key_index - 1):
@@ -72,46 +72,46 @@ struct HashMapDict[V: CollectionElement, hash: fn(String) -> UInt64]:
     
     @always_inline
     fn _is_deleted(self, index: Int) -> Bool:
-        let offset = index // 8
-        let bit_index = index & 7
+        var offset = index // 8
+        var bit_index = index & 7
         return self.deleted_mask.offset(offset).load() & (1 << bit_index) != 0
 
     @always_inline
     fn _deleted(self, index: Int):
-        let offset = index // 8
-        let bit_index = index & 7
-        let p = self.deleted_mask.offset(offset)
-        let mask = p.load()
+        var offset = index // 8
+        var bit_index = index & 7
+        var p = self.deleted_mask.offset(offset)
+        var mask = p.load()
         p.store(mask | (1 << bit_index))
     
     @always_inline
     fn _not_deleted(self, index: Int):
-        let offset = index // 8
-        let bit_index = index & 7
-        let p = self.deleted_mask.offset(offset)
-        let mask = p.load()
+        var offset = index // 8
+        var bit_index = index & 7
+        var p = self.deleted_mask.offset(offset)
+        var mask = p.load()
         p.store(mask & ~(1 << bit_index))
 
     @always_inline
     fn _rehash(inout self):
-        let old_mask_capacity = self.capacity >> 3
+        var old_mask_capacity = self.capacity >> 3
         self.key_map.free()
         self.capacity <<= 1
-        let mask_capacity = self.capacity >> 3
+        var mask_capacity = self.capacity >> 3
         self.key_map = DTypePointer[DType.uint32].alloc(self.capacity)
         memset_zero(self.key_map, self.capacity)
         
-        let _deleted_mask = DTypePointer[DType.uint8].alloc(mask_capacity)
+        var _deleted_mask = DTypePointer[DType.uint8].alloc(mask_capacity)
         memset_zero(_deleted_mask, mask_capacity)
         memcpy(_deleted_mask, self.deleted_mask, old_mask_capacity)
         self.deleted_mask.free()
         self.deleted_mask = _deleted_mask
 
-        let modulo_mask = self.capacity - 1
+        var modulo_mask = self.capacity - 1
         for i in range(len(self.keys)):
-            let key = self.keys[i]
-            let key_hash = self.key_hashes[i]
-            let key_hash_vec = SIMD[DType.uint64, 4](key_hash)
+            var key = self.keys[i]
+            var key_hash = self.key_hashes[i]
+            var key_hash_vec = SIMD[DType.uint64, 4](key_hash)
 
             var key_map_indices = (key_hash_vec >> SIMD[DType.uint64, 4](0, 8, 16 , 24)) & modulo_mask
 
@@ -119,8 +119,8 @@ struct HashMapDict[V: CollectionElement, hash: fn(String) -> UInt64]:
             while searching:
                 @unroll
                 for lane in range(4):
-                    let key_map_index = key_map_indices[lane]
-                    let key_index = self.key_map.offset(key_map_indices[lane]).load().to_int()
+                    var key_map_index = key_map_indices[lane]
+                    var key_index = self.key_map.offset(key_map_indices[lane]).load().to_int()
                     if key_index == 0:
                         self.key_map.offset(key_map_index).store(UInt32(i) + 1)
                         searching = False
@@ -129,21 +129,21 @@ struct HashMapDict[V: CollectionElement, hash: fn(String) -> UInt64]:
 
 
     fn get(self, key: String, default: V) -> V:
-        let key_hash = hash(key)
-        let modulo_mask = self.capacity - 1
-        let key_hash_vec = SIMD[DType.uint64, 4](key_hash)
+        var key_hash = hash(key)
+        var modulo_mask = self.capacity - 1
+        var key_hash_vec = SIMD[DType.uint64, 4](key_hash)
 
         var key_map_indices = (key_hash_vec >> SIMD[DType.uint64, 4](0, 8, 16 , 24)) & modulo_mask
         while True:
             @unroll
             for lane in range(4):
-                let key_map_index = key_map_indices[lane]
-                let key_index = self.key_map.offset(key_map_indices[lane]).load().to_int()
+                var key_map_index = key_map_indices[lane]
+                var key_index = self.key_map.offset(key_map_indices[lane]).load().to_int()
                 
                 if key_index == 0:
                     return default
-                let other_key = self.keys[key_index - 1]
-                let other_key_hash = self.key_hashes[key_index - 1]
+                var other_key = self.keys[key_index - 1]
+                var other_key_hash = self.key_hashes[key_index - 1]
                 if key_hash == other_key_hash and eq(other_key, key):
                     if self._is_deleted(key_index - 1):
                         return default
@@ -151,21 +151,21 @@ struct HashMapDict[V: CollectionElement, hash: fn(String) -> UInt64]:
                 key_map_indices = (key_map_indices + 1) & modulo_mask
 
     fn delete(inout self, key: String):
-        let key_hash = hash(key)
-        let modulo_mask = self.capacity - 1
-        let key_hash_vec = SIMD[DType.uint64, 4](key_hash)
+        var key_hash = hash(key)
+        var modulo_mask = self.capacity - 1
+        var key_hash_vec = SIMD[DType.uint64, 4](key_hash)
 
         var key_map_indices = (key_hash_vec >> SIMD[DType.uint64, 4](0, 8, 16 , 24)) & modulo_mask
         while True:
             @unroll
             for lane in range(4):
-                let key_map_index = key_map_indices[lane]
-                let key_index = self.key_map.offset(key_map_indices[lane]).load().to_int()
+                var key_map_index = key_map_indices[lane]
+                var key_index = self.key_map.offset(key_map_indices[lane]).load().to_int()
                     
                 if key_index == 0:
                     return
-                let other_key = self.keys[key_index - 1]
-                let other_key_hash = self.key_hashes[key_index - 1]
+                var other_key = self.keys[key_index - 1]
+                var other_key_hash = self.key_hashes[key_index - 1]
                 if key_hash == other_key_hash and eq(other_key, key):
                     self.count -= 1
                     return self._deleted(key_index - 1)
@@ -185,7 +185,7 @@ struct HashMapDict[V: CollectionElement, hash: fn(String) -> UInt64]:
         print_no_newline("\n")
         print_no_newline("Deleted mask:")
         for i in range(self.capacity >> 3):
-            let mask = self.deleted_mask.offset(i).load()
+            var mask = self.deleted_mask.offset(i).load()
             for j in range(8):
                 print_no_newline((mask >> j) & 1)
             print_no_newline(" ")

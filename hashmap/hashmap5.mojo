@@ -33,9 +33,9 @@ struct KeysContainer(Sized):
 
     @always_inline
     fn add(inout self, key: String, hash_key: UInt64):
-        let prev_end = 0 if self.count == 0 else self.keys_end[self.count - 1]
-        let key_length = len(key)
-        let new_end = prev_end + key_length
+        var prev_end = 0 if self.count == 0 else self.keys_end[self.count - 1]
+        var key_length = len(key)
+        var new_end = prev_end + key_length
         
         var needs_realocation = False
         while new_end > self.allocated_bytes:
@@ -65,8 +65,8 @@ struct KeysContainer(Sized):
 
     @always_inline
     fn get_index(self, key: String, key_hash: UInt64) -> Int:
-        let l1 = len(key)
-        let p1 = key._as_ptr()
+        var l1 = len(key)
+        var p1 = key._as_ptr()
         var start = 0
         var index_offset = 0
 
@@ -74,8 +74,8 @@ struct KeysContainer(Sized):
             if key_hash != self.key_hashes[i]:
                 continue
             var found = True
-            let end = self.keys_end[i].to_int()
-            let l2 = end - start
+            var end = self.keys_end[i].to_int()
+            var l2 = end - start
             if l1 != l2:
                 start = end
                 continue
@@ -104,8 +104,8 @@ struct HashMapDict[V: CollectionElement, hash: fn(String) -> UInt64]:
         memset_zero(self.deleted_mask, _capacity >> 3)
 
     fn put(inout self, key: String, value: V):
-        let key_hash = hash(key)
-        let index = self.keys.get_index(key, key_hash)
+        var key_hash = hash(key)
+        var index = self.keys.get_index(key, key_hash)
         if index >= 0:
             if self._is_deleted(index):
                 self._not_deleted(index)
@@ -115,35 +115,35 @@ struct HashMapDict[V: CollectionElement, hash: fn(String) -> UInt64]:
 
     @always_inline
     fn _is_deleted(self, index: Int) -> Bool:
-        let offset = index // 8
-        let bit_index = index & 7
+        var offset = index // 8
+        var bit_index = index & 7
         return self.deleted_mask.offset(offset).load() & (1 << bit_index) != 0
 
     @always_inline
     fn _deleted(self, index: Int):
-        let offset = index // 8
-        let bit_index = index & 7
-        let p = self.deleted_mask.offset(offset)
-        let mask = p.load()
+        var offset = index // 8
+        var bit_index = index & 7
+        var p = self.deleted_mask.offset(offset)
+        var mask = p.load()
         p.store(mask | (1 << bit_index))
     
     @always_inline
     fn _not_deleted(self, index: Int):
-        let offset = index // 8
-        let bit_index = index & 7
-        let p = self.deleted_mask.offset(offset)
-        let mask = p.load()
+        var offset = index // 8
+        var bit_index = index & 7
+        var p = self.deleted_mask.offset(offset)
+        var mask = p.load()
         p.store(mask & ~(1 << bit_index))
 
     fn get(self, key: String, default: V) -> V:
-        let key_hash = hash(key)
-        let index = self.keys.get_index(key, key_hash)
+        var key_hash = hash(key)
+        var index = self.keys.get_index(key, key_hash)
         if index < 0 or self._is_deleted(index):
             return default
         return self.values[index]
 
     fn delete(inout self, key: String):
-        let key_hash = hash(key)
-        let index = self.keys.get_index(key, key_hash)
+        var key_hash = hash(key)
+        var index = self.keys.get_index(key, key_hash)
         if index >= 0:
             self._deleted(index)  

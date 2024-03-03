@@ -1,5 +1,6 @@
 from math import min
 from collections.vector import DynamicVector
+from pathlib import Path
 
 fn int_cmp(a: UInt32, b: UInt32) -> Int:
     return a.to_int() - b.to_int()
@@ -14,18 +15,18 @@ fn int_to_str64(a: UInt64) -> String:
     return String(a)
 
 fn cmp_strl(a: StringLiteral, b: StringLiteral) -> Int:
-    let l = min(len(a), len(b))
-    let p1 = a.data().bitcast[DType.uint8]()
-    let p2 = b.data().bitcast[DType.uint8]()
-    let diff = memcmp(p1, p2, l)
+    var l = min(len(a), len(b))
+    var p1 = a.data().bitcast[DType.uint8]()
+    var p2 = b.data().bitcast[DType.uint8]()
+    var diff = memcmp(p1, p2, l)
 
     return diff if diff != 0 else len(a) - len(b)
 
 fn cmp_str(a: String, b: String) -> Int:
-    let l = min(len(a), len(b))
-    let p1 = a._as_ptr().bitcast[DType.uint8]()
-    let p2 = b._as_ptr().bitcast[DType.uint8]()
-    let diff = memcmp(p1, p2, l)
+    var l = min(len(a), len(b))
+    var p1 = a._as_ptr().bitcast[DType.uint8]()
+    var p2 = b._as_ptr().bitcast[DType.uint8]()
+    var diff = memcmp(p1, p2, l)
 
     return diff if diff != 0 else len(a) - len(b)
 
@@ -54,6 +55,6 @@ fn corpus7() raises -> DynamicVector[String]:
     return String('AbortMultipartUpload CompleteMultipartUpload CopyObject CreateBucket CreateMultipartUpload DeleteBucket DeleteBucketAnalyticsConfiguration DeleteBucketCors DeleteBucketEncryption DeleteBucketIntelligentTieringConfiguration DeleteBucketInventoryConfiguration DeleteBucketLifecycle DeleteBucketMetricsConfiguration DeleteBucketOwnershipControls DeleteBucketPolicy DeleteBucketReplication DeleteBucketTagging DeleteBucketWebsite DeleteObject DeleteObjects DeleteObjectTagging DeletePublicAccessBlock GetBucketAccelerateConfiguration GetBucketAcl GetBucketAnalyticsConfiguration GetBucketCors GetBucketEncryption GetBucketIntelligentTieringConfiguration GetBucketInventoryConfiguration GetBucketLifecycle GetBucketLifecycleConfiguration GetBucketLocation GetBucketLogging GetBucketMetricsConfiguration GetBucketNotification GetBucketNotificationConfiguration GetBucketOwnershipControls GetBucketPolicy GetBucketPolicyStatus GetBucketReplication GetBucketRequestPayment GetBucketTagging GetBucketVersioning GetBucketWebsite GetObject GetObjectAcl GetObjectAttributes GetObjectLegalHold GetObjectLockConfiguration GetObjectRetention GetObjectTagging GetObjectTorrent GetPublicAccessBlock HeadBucket HeadObject ListBucketAnalyticsConfigurations ListBucketIntelligentTieringConfigurations ListBucketInventoryConfigurations ListBucketMetricsConfigurations ListBuckets ListMultipartUploads ListObjects ListObjectsV2 ListObjectVersions ListParts PutBucketAccelerateConfiguration PutBucketAcl PutBucketAnalyticsConfiguration PutBucketCors PutBucketEncryption PutBucketIntelligentTieringConfiguration PutBucketInventoryConfiguration PutBucketLifecycle PutBucketLifecycleConfiguration PutBucketLogging PutBucketMetricsConfiguration PutBucketNotification PutBucketNotificationConfiguration PutBucketOwnershipControls PutBucketPolicy PutBucketReplication PutBucketRequestPayment PutBucketTagging PutBucketVersioning PutBucketWebsite PutObject PutObjectAcl PutObjectLegalHold PutObjectLockConfiguration PutObjectRetention PutObjectTagging PutPublicAccessBlock RestoreObject SelectObjectContent UploadPart UploadPartCopy WriteGetObjectResponse", "CreateAccessPoint CreateAccessPointForObjectLambda CreateBucket CreateJob CreateMultiRegionAccessPoint DeleteAccessPoint DeleteAccessPointForObjectLambda DeleteAccessPointPolicy DeleteAccessPointPolicyForObjectLambda DeleteBucket DeleteBucketLifecycleConfiguration DeleteBucketPolicy DeleteBucketReplication DeleteBucketTagging DeleteJobTagging DeleteMultiRegionAccessPoint DeletePublicAccessBlock DeleteStorageLensConfiguration DeleteStorageLensConfigurationTagging DescribeJob DescribeMultiRegionAccessPointOperation GetAccessPoint GetAccessPointConfigurationForObjectLambda GetAccessPointForObjectLambda GetAccessPointPolicy GetAccessPointPolicyForObjectLambda GetAccessPointPolicyStatus GetAccessPointPolicyStatusForObjectLambda GetBucket GetBucketLifecycleConfiguration GetBucketPolicy GetBucketReplication GetBucketTagging GetBucketVersioning GetJobTagging GetMultiRegionAccessPoint GetMultiRegionAccessPointPolicy GetMultiRegionAccessPointPolicyStatus GetMultiRegionAccessPointRoutes GetPublicAccessBlock GetStorageLensConfiguration GetStorageLensConfigurationTagging ListAccessPoints ListAccessPointsForObjectLambda ListJobs ListMultiRegionAccessPoints ListRegionalBuckets ListStorageLensConfigurations PutAccessPointConfigurationForObjectLambda PutAccessPointPolicy PutAccessPointPolicyForObjectLambda PutBucketLifecycleConfiguration PutBucketPolicy PutBucketReplication PutBucketTagging PutBucketVersioning PutJobTagging PutMultiRegionAccessPointPolicy PutPublicAccessBlock PutStorageLensConfiguration PutStorageLensConfigurationTagging SubmitMultiRegionAccessPointRoutes UpdateJobPriority UpdateJobStatus').split(" ")
 
 fn corpus8() raises -> DynamicVector[String]:
-    let text = Path("/usr/share/dict/words").read_text()
+    var text = Path("/usr/share/dict/words").read_text()
     print("Text:", len(text))
     return text.split("\n")

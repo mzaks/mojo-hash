@@ -34,7 +34,7 @@ alias K = SIMD[DType.uint32, 64](
 alias PADDING = create_padding()
 
 fn create_padding() -> DTypePointer[DType.uint8]:
-    let result = DTypePointer[DType.uint8].alloc(64)
+    var result = DTypePointer[DType.uint8].alloc(64)
     result.store(0, 0x80)
     for i in range(1, 64):
         result.store(i, 0)
@@ -70,8 +70,8 @@ struct Md5Context:
     @always_inline
     fn finalize(owned self) -> SIMD[DType.uint8, 16]:
         var input = SIMD[DType.uint32, 16]()
-        let offset = (self.size & 63).to_int()
-        let padding_length = 56 - offset if offset < 56 else 56 + 64 - offset
+        var offset = (self.size & 63).to_int()
+        var padding_length = 56 - offset if offset < 56 else 56 + 64 - offset
 
         self.update(PADDING, padding_length)
         self.size -= padding_length

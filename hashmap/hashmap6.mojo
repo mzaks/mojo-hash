@@ -32,9 +32,9 @@ struct KeysContainer(Sized):
 
     @always_inline
     fn add(inout self, key: String):
-        let prev_end = 0 if self.count == 0 else self.keys_end[self.count - 1]
-        let key_length = len(key)
-        let new_end = prev_end + key_length
+        var prev_end = 0 if self.count == 0 else self.keys_end[self.count - 1]
+        var key_length = len(key)
+        var new_end = prev_end + key_length
         
         var needs_realocation = False
         while new_end > self.allocated_bytes:
@@ -61,22 +61,22 @@ struct KeysContainer(Sized):
     fn get(self, index: Int) -> StringRef:
         if index < 0 or index >= self.count:
             return ""
-        let start = 0 if index == 0 else self.keys_end[index - 1]
-        let length = self.keys_end[index] - start
+        var start = 0 if index == 0 else self.keys_end[index - 1]
+        var length = self.keys_end[index] - start
         return StringRef(self.keys.offset(start), length.to_int())
     
     @always_inline
     fn get_index(self, key: String) -> Int:
-        let l1 = len(key)
-        let p1 = key._as_ptr()
+        var l1 = len(key)
+        var p1 = key._as_ptr()
         var start = 0
         var index_offset = 0
         alias lanes = 4
         while self.count - index_offset >= lanes:
-            let ends = self.keys_end.simd_load[lanes](index_offset)
+            var ends = self.keys_end.simd_load[lanes](index_offset)
             var starts = ends.shift_right[1]()
             starts[0] = start
-            let lengths = ends - starts
+            var lengths = ends - starts
             var skip_mask = lengths != l1
             
             if skip_mask:
@@ -95,8 +95,8 @@ struct KeysContainer(Sized):
 
         for i in range(index_offset, self.count):
             var found = True
-            let end = self.keys_end[i].to_int()
-            let l2 = end - start
+            var end = self.keys_end[i].to_int()
+            var l2 = end - start
             if l1 != l2:
                 start = end
                 continue
@@ -124,7 +124,7 @@ struct HashMapDict[V: CollectionElement, hash: fn(String) -> UInt64]:
         self.count = 0
 
     fn put(inout self, key: String, value: V):
-        let index = self.keys.get_index(key)
+        var index = self.keys.get_index(key)
         if index < 0:
             self.keys.add(key)
             self.values.push_back(value)
@@ -133,7 +133,7 @@ struct HashMapDict[V: CollectionElement, hash: fn(String) -> UInt64]:
         self.count += 1
 
     fn get(self, key: String, default: V) -> V:
-        let index = self.keys.get_index(key)
+        var index = self.keys.get_index(key)
         if index < 0:
             return default
         else:

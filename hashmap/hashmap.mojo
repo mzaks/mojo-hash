@@ -26,36 +26,36 @@ struct HashMapDict[V: CollectionElement, hash: fn(String) -> UInt64]:
     
     @always_inline
     fn _is_deleted(self, index: Int) -> Bool:
-        let offset = index // 8
-        let bit_index = index & 7
+        var offset = index // 8
+        var bit_index = index & 7
         return self.deleted_mask.offset(offset).load() & (1 << bit_index) != 0
 
     @always_inline
     fn _deleted(self, index: Int):
-        let offset = index // 8
-        let bit_index = index & 7
-        let p = self.deleted_mask.offset(offset)
-        let mask = p.load()
+        var offset = index // 8
+        var bit_index = index & 7
+        var p = self.deleted_mask.offset(offset)
+        var mask = p.load()
         p.store(mask | (1 << bit_index))
     
     @always_inline
     fn _not_deleted(self, index: Int):
-        let offset = index // 8
-        let bit_index = index & 7
-        let p = self.deleted_mask.offset(offset)
-        let mask = p.load()
+        var offset = index // 8
+        var bit_index = index & 7
+        var p = self.deleted_mask.offset(offset)
+        var mask = p.load()
         p.store(mask & ~(1 << bit_index))
 
     @always_inline
     fn _rehash(inout self):
-        let old_mask_capacity = self.capacity >> 3
+        var old_mask_capacity = self.capacity >> 3
         self.key_map.free()
         self.capacity <<= 1
-        let mask_capacity = self.capacity >> 3
+        var mask_capacity = self.capacity >> 3
         self.key_map = DTypePointer[DType.uint32].alloc(self.capacity)
         memset_zero(self.key_map, self.capacity)
         
-        let _deleted_mask = DTypePointer[DType.uint8].alloc(mask_capacity)
+        var _deleted_mask = DTypePointer[DType.uint8].alloc(mask_capacity)
         memset_zero(_deleted_mask, mask_capacity)
         memcpy(_deleted_mask, self.deleted_mask, old_mask_capacity)
         self.deleted_mask.free()
@@ -66,13 +66,13 @@ struct HashMapDict[V: CollectionElement, hash: fn(String) -> UInt64]:
 
     @always_inline
     fn _put(inout self, key: String, value: V, rehash_index: Int):
-        let key_hash = hash(key)
-        let modulo_mask = self.capacity - 1
+        var key_hash = hash(key)
+        var modulo_mask = self.capacity - 1
         var key_map_index = (key_hash & modulo_mask).to_int()
         while True:
-            let key_index = self.key_map.offset(key_map_index).load().to_int()
+            var key_index = self.key_map.offset(key_map_index).load().to_int()
             if key_index == 0:
-                let new_key_index: Int
+                var new_key_index: Int
                 if rehash_index == -1:
                     self.keys.push_back(key)
                     self.values.push_back(value)
@@ -83,7 +83,7 @@ struct HashMapDict[V: CollectionElement, hash: fn(String) -> UInt64]:
                 self.key_map.offset(key_map_index).store(UInt32(new_key_index))
                 return
 
-            let other_key = self.keys[key_index - 1]
+            var other_key = self.keys[key_index - 1]
             if other_key == key:
                 self.values[key_index - 1] = value
                 if self._is_deleted(key_index - 1):
@@ -94,14 +94,14 @@ struct HashMapDict[V: CollectionElement, hash: fn(String) -> UInt64]:
             key_map_index = (key_map_index + 1) & modulo_mask
 
     fn get(self, key: String, default: V) -> V:
-        let key_hash = hash(key)
-        let modulo_mask = self.capacity - 1
+        var key_hash = hash(key)
+        var modulo_mask = self.capacity - 1
         var key_map_index = (key_hash & modulo_mask).to_int()
         while True:
-            let key_index = self.key_map.offset(key_map_index).load().to_int()
+            var key_index = self.key_map.offset(key_map_index).load().to_int()
             if key_index == 0:
                 return default
-            let other_key = self.keys[key_index - 1]
+            var other_key = self.keys[key_index - 1]
             if other_key == key:
                 if self._is_deleted(key_index - 1):
                     return default
@@ -109,14 +109,14 @@ struct HashMapDict[V: CollectionElement, hash: fn(String) -> UInt64]:
             key_map_index = (key_map_index + 1) & modulo_mask
 
     fn delete(inout self, key: String):
-        let key_hash = hash(key)
-        let modulo_mask = self.capacity - 1
+        var key_hash = hash(key)
+        var modulo_mask = self.capacity - 1
         var key_map_index = (key_hash & modulo_mask).to_int()
         while True:
-            let key_index = self.key_map.offset(key_map_index).load().to_int()
+            var key_index = self.key_map.offset(key_map_index).load().to_int()
             if key_index == 0:
                 return
-            let other_key = self.keys[key_index - 1]
+            var other_key = self.keys[key_index - 1]
             if other_key == key:
                 self.count -= 1
                 return self._deleted(key_index - 1)
@@ -136,7 +136,7 @@ struct HashMapDict[V: CollectionElement, hash: fn(String) -> UInt64]:
         print_no_newline("\n")
         print_no_newline("Deleted mask:")
         for i in range(self.capacity >> 3):
-            let mask = self.deleted_mask.offset(i).load()
+            var mask = self.deleted_mask.offset(i).load()
             for j in range(8):
                 print_no_newline((mask >> j) & 1)
             print_no_newline(" ")
