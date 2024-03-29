@@ -1,6 +1,5 @@
 from math.bit import bit_length
 # from utils.list import VariadicList
-from collections.vector import DynamicVector
 
 struct FibyTree[T: CollectionElement, cmp: fn(a:T, b:T) -> Int, to_str: fn(T) -> String](Sized):
     alias Union = 0
@@ -12,17 +11,17 @@ struct FibyTree[T: CollectionElement, cmp: fn(a:T, b:T) -> Int, to_str: fn(T) ->
     alias IsSubset = 6
     alias IsSuperset = 7
 
-    var elements: DynamicVector[T]
-    var left: DynamicVector[UInt32]
-    var right: DynamicVector[UInt32]
+    var elements: List[T]
+    var left: List[UInt32]
+    var right: List[UInt32]
     var deleted: Int
     var max_depth: UInt32
     var balanced: Bool
     
     fn __init__(inout self):
-        self.elements = DynamicVector[T]()
-        self.left = DynamicVector[UInt32]()
-        self.right = DynamicVector[UInt32]()
+        self.elements = List[T]()
+        self.left = List[UInt32]()
+        self.right = List[UInt32]()
         self.deleted = 0
         self.max_depth = 0
         self.balanced = False
@@ -90,9 +89,9 @@ struct FibyTree[T: CollectionElement, cmp: fn(a:T, b:T) -> Int, to_str: fn(T) ->
     @always_inline("nodebug")
     fn _set_root(inout self, element: T):
         if len(self.elements) == 0:
-            self.elements.push_back(element)
-            self.left.push_back(0)
-            self.right.push_back(0)
+            self.elements.append(element)
+            self.left.append(0)
+            self.right.append(0)
         else:
             self.elements[0] = element
             self.left[0] = 0
@@ -103,17 +102,17 @@ struct FibyTree[T: CollectionElement, cmp: fn(a:T, b:T) -> Int, to_str: fn(T) ->
     @always_inline("nodebug")
     fn _add_left(inout self, parent: UInt32, element: T):
         var index = len(self.elements)
-        self.elements.push_back(element)
-        self.left.push_back(index)
-        self.right.push_back(index)
+        self.elements.append(element)
+        self.left.append(index)
+        self.right.append(index)
         self.left[parent.to_int()] = index
     
     @always_inline("nodebug")
     fn _add_right(inout self, parent: UInt32, element: T):
         var index = len(self.elements)
-        self.elements.push_back(element)
-        self.left.push_back(index)
-        self.right.push_back(index)
+        self.elements.append(element)
+        self.left.append(index)
+        self.right.append(index)
         self.right[parent.to_int()] = index
     
     @always_inline("nodebug")
@@ -173,17 +172,17 @@ struct FibyTree[T: CollectionElement, cmp: fn(a:T, b:T) -> Int, to_str: fn(T) ->
         return self._swap_with_next_smaller_leaf(index)
     
     @always_inline("nodebug")
-    fn sorted_elements(self) -> DynamicVector[T]:
+    fn sorted_elements(self) -> List[T]:
         var number_of_elements = self.__len__()
-        var result = DynamicVector[T](capacity=number_of_elements)
+        var result = List[T](capacity=number_of_elements)
         if number_of_elements == 0:
             return result
-        var stack = DynamicVector[UInt32](capacity=self.max_depth.to_int())
+        var stack = List[UInt32](capacity=self.max_depth.to_int())
         var current: UInt32 = 0
         while len(result) < number_of_elements:
             if len(result) == 0 or cmp(result[len(result) - 1], self.elements[self.left[current.to_int()].to_int()]) < 0:
                 while self.has_left(current):
-                    stack.push_back(current)
+                    stack.append(current)
                     current = self.left[current.to_int()]
             result.append(self.elements[current.to_int()])
             if self.has_right(current):
@@ -203,7 +202,7 @@ struct FibyTree[T: CollectionElement, cmp: fn(a:T, b:T) -> Int, to_str: fn(T) ->
     
     fn union(self, other: Self) -> Self:
         var result = Self()
-        var combined: DynamicVector[T]
+        var combined: List[T]
         if other.__len__() == 0:
             combined = self.sorted_elements()
         elif self.__len__() == 0:
@@ -244,7 +243,7 @@ struct FibyTree[T: CollectionElement, cmp: fn(a:T, b:T) -> Int, to_str: fn(T) ->
         
     fn difference(self, other: Self) -> Self:
         var result = FibyTree[T, cmp, to_str]()
-        var combined: DynamicVector[T]
+        var combined: List[T]
         if other.__len__() == 0 or self.__len__() == 0:
             combined = self.sorted_elements()
         else:
@@ -270,7 +269,7 @@ struct FibyTree[T: CollectionElement, cmp: fn(a:T, b:T) -> Int, to_str: fn(T) ->
     
     fn symmetric_difference(self, other: Self) -> Self:
         var result = FibyTree[T, cmp, to_str]()
-        var combined: DynamicVector[T]
+        var combined: List[T]
         if other.__len__() == 0:
             combined = self.sorted_elements()
         elif self.__len__() == 0:
@@ -290,18 +289,18 @@ struct FibyTree[T: CollectionElement, cmp: fn(a:T, b:T) -> Int, to_str: fn(T) ->
         self._balance_with(combined)
     
     @always_inline("nodebug")
-    fn _combine[type: Int](self, other: Self) -> DynamicVector[T]:
+    fn _combine[type: Int](self, other: Self) -> List[T]:
         var num1 = self.__len__()
         var num2 = other.__len__()
         # assert(num1 > 0)
         # assert(num2 > 0)
-        var combined = DynamicVector[T](capacity=num1 + num2)
+        var combined = List[T](capacity=num1 + num2)
         var cur1: UInt32 = 0
         var cur2: UInt32 = 0
-        var stack1 = DynamicVector[UInt32](capacity=self.max_depth.to_int())
-        var stack2 = DynamicVector[UInt32](capacity=other.max_depth.to_int())
-        var last_returned1 = DynamicVector[T](capacity=1)
-        var last_returned2 = DynamicVector[T](capacity=1)
+        var stack1 = List[UInt32](capacity=self.max_depth.to_int())
+        var stack2 = List[UInt32](capacity=other.max_depth.to_int())
+        var last_returned1 = List[T](capacity=1)
+        var last_returned2 = List[T](capacity=1)
         var e1 = self._sorted_iter(cur1, stack1, last_returned1)
         last_returned1.append(e1)
         var e2 = other._sorted_iter(cur2, stack2, last_returned2)
@@ -427,10 +426,10 @@ struct FibyTree[T: CollectionElement, cmp: fn(a:T, b:T) -> Int, to_str: fn(T) ->
 
         var cur1: UInt32 = 0
         var cur2: UInt32 = 0
-        var stack1 = DynamicVector[UInt32](capacity=self.max_depth.to_int())
-        var stack2 = DynamicVector[UInt32](capacity=other.max_depth.to_int())
-        var last_returned1 = DynamicVector[T](capacity=1)
-        var last_returned2 = DynamicVector[T](capacity=1)
+        var stack1 = List[UInt32](capacity=self.max_depth.to_int())
+        var stack2 = List[UInt32](capacity=other.max_depth.to_int())
+        var last_returned1 = List[T](capacity=1)
+        var last_returned2 = List[T](capacity=1)
         var e1 = self._sorted_iter(cur1, stack1, last_returned1)
         last_returned1.append(e1)
         var e2 = other._sorted_iter(cur2, stack2, last_returned2)
@@ -497,11 +496,11 @@ struct FibyTree[T: CollectionElement, cmp: fn(a:T, b:T) -> Int, to_str: fn(T) ->
         return False
     
     @always_inline("nodebug")
-    fn _sorted_iter(self, inout current: UInt32, inout stack: DynamicVector[UInt32], inout last_returned: DynamicVector[T]) -> T:
+    fn _sorted_iter(self, inout current: UInt32, inout stack: List[UInt32], inout last_returned: List[T]) -> T:
         # using UnsafeFixedVector[T](1) as poor mans Optional for last_returned
         if len(last_returned) == 0 or cmp(last_returned[0], self.elements[self.left[current.to_int()].to_int()]) < 0:
             while self.has_left(current):
-                stack.push_back(current)
+                stack.append(current)
                 current = self.left[current.to_int()]
         var result = self.elements[current.to_int()]
         if self.has_right(current):
@@ -619,7 +618,7 @@ struct FibyTree[T: CollectionElement, cmp: fn(a:T, b:T) -> Int, to_str: fn(T) ->
         self._balance_with(sorted_elements)
     
     @always_inline("nodebug")
-    fn _balance_with(inout self, sorted_elements: DynamicVector[T]):
+    fn _balance_with(inout self, sorted_elements: List[T]):
         var new_size = len(sorted_elements)
         self.elements.resize(new_size, self.elements[len(self.elements) - 1])
         self.left.resize(new_size, 0)
@@ -644,7 +643,7 @@ struct FibyTree[T: CollectionElement, cmp: fn(a:T, b:T) -> Int, to_str: fn(T) ->
         self.balanced = True
         self.max_depth = self._optimal_depth()
     
-    fn _eytzinger(inout self, inout i: Int, k: Int, v: DynamicVector[T]):
+    fn _eytzinger(inout self, inout i: Int, k: Int, v: List[T]):
         if k <= len(v):
             self._eytzinger(i, k * 2, v)
             self.elements[k - 1] = v[i]

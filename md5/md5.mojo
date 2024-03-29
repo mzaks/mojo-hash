@@ -1,6 +1,6 @@
 # Based on https://github.com/Zunawe/md5-c
 
-from algorithm.functional import unroll
+from utils.loop import unroll
 from memory.unsafe import bitcast
 from memory import memset_zero
 from math import rotate_bits_left
