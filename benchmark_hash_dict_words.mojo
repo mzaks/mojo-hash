@@ -3,19 +3,43 @@ from md5 import md5_string
 from wyhasher import wyhash
 from ahasher import ahash
 from fxhash import fxhash64
+from sha import sha256_encode
 
 import benchmark
 from benchmark import Unit
 from pathlib import Path
+from collections.vector import InlinedFixedVector
 
+fn to_hex(digest: InlinedFixedVector[UInt8, 32]) -> String:
+    var lookup = String("0123456789abcdef")
+    var result: String = ""
+    for i in range(len(digest)):
+        var v = int(digest[i])
+        result += lookup[(v >> 4)]
+        result += lookup[v & 15]
+    return result
+
+fn to_hex(digest: SIMD[DType.uint8, 16]) -> String:
+    var lookup = String("0123456789abcdef")
+    var result: String = ""
+    for i in range(len(digest)):
+        var v = int(digest[i])
+        result += lookup[(v >> 4)]
+        result += lookup[v & 15]
+    return result
 
 fn main() raises:
     var text = Path("/usr/share/dict/words").read_text()
     var tik = now()
     var h0 = md5_string(text)
     var tok = now()
-    print("MD5     :", tok - tik, h0, len(text))
+    print("MD5     :", tok - tik, to_hex(h0), len(text))
     
+    tik = now()
+    var h5 = sha256_encode(text.unsafe_uint8_ptr(), 0)
+    tok = now()
+    print("SHA256  :", tok - tik, to_hex(h5), len(text))
+
     tik = now()
     var h1 = wyhash(text, 0)
     tok = now()
@@ -32,7 +56,7 @@ fn main() raises:
     print("Fxhash  :", tok - tik, h3, len(text))
 
     tik = now()
-    var h4 = hash(text._as_ptr(), len(text))
+    var h4 = hash(text.unsafe_uint8_ptr(), len(text))
     tok = now()
     print("Std hash:", tok - tik, h4, len(text))
 
@@ -50,7 +74,7 @@ fn main() raises:
 
     @parameter
     fn hash_test():
-        hi = hash(text._as_ptr(), len(text))
+        hi = hash(text.unsafe_uint8_ptr(), len(text))
 
     print("===Std hash===")
     var report1 = benchmark.run[hash_test]()

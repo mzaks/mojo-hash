@@ -5,7 +5,6 @@ from wyhasher import wyhash
 from time import now
 from testing import assert_equal
 from ahasher import ahash
-from math import min
 from collections.dict import Dict, KeyElement
 
 fn _fxhash64(s: String) -> UInt64:
@@ -16,18 +15,18 @@ fn _wyhash(s : String) -> UInt64:
     return wyhash(s, 0, default_secret)
 
 fn _std_hash(s: String) -> UInt64:
-    return hash(s._as_ptr(), len(s))
+    return hash(s.unsafe_uint8_ptr(), len(s))
 
-fn all_corpus() raises -> DynamicVector[DynamicVector[String]]:
-    var result = DynamicVector[DynamicVector[String]]()
-    result.push_back(corpus1())
-    result.push_back(corpus2())
-    result.push_back(corpus3())
-    result.push_back(corpus4())
-    result.push_back(corpus5())
-    result.push_back(corpus6())
-    result.push_back(corpus7())
-    result.push_back(corpus8())
+fn all_corpus() raises -> List[List[String]]:
+    var result = List[List[String]]()
+    result.append(corpus1())
+    result.append(corpus2())
+    result.append(corpus3())
+    result.append(corpus4())
+    result.append(corpus5())
+    result.append(corpus6())
+    result.append(corpus7())
+    result.append(corpus8())
     return result
 
 fn benchamark_hash_map[hash_fn: fn(String) -> UInt64](name: String) raises:
@@ -70,23 +69,6 @@ fn benchamark_hash_map[hash_fn: fn(String) -> UInt64](name: String) raises:
         print(name, "Avg get time", min_get / (len(corpus) * rounds))
         print(value_sum)
 
-@value
-struct StringKey(KeyElement):
-    var s: String
-
-    fn __init__(inout self, owned s: String):
-        self.s = s^
-
-    fn __init__(inout self, s: StringLiteral):
-        self.s = String(s)
-
-    fn __hash__(self) -> Int:
-        var ptr = self.s._as_ptr()
-        return hash(ptr, len(self.s))
-
-    fn __eq__(self, other: Self) -> Bool:
-        return self.s == other.s
-
 fn benchamark_std_hash_map() raises:
     var corpus_list = all_corpus()
     for i in range(len(corpus_list)):
@@ -97,7 +79,7 @@ fn benchamark_std_hash_map() raises:
         print("Corpus", i + 1)
         var corpus = corpus_list[i]
         for _ in range(rounds):
-            var map = Dict[StringKey, Int]()
+            var map = Dict[String, Int]()
             var total = 0
             for i in range(len(corpus)):
                 var key = corpus[i]
@@ -130,4 +112,4 @@ fn main() raises :
     # benchamark_hash_map[_wyhash]("WyHash")
     # benchamark_hash_map[_fxhash64]("FxHash64")
     # benchamark_hash_map[_std_hash]("StdHash")
-    # benchamark_std_hash_map()
+    benchamark_std_hash_map()

@@ -3,7 +3,7 @@
 from utils.loop import unroll
 from memory.unsafe import bitcast
 from memory import memset_zero
-from math import rotate_bits_left
+from bit import rotate_bits_left
 
 alias S = SIMD[DType.uint32, 64](
     7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22,
@@ -54,7 +54,7 @@ struct Md5Context:
 
     @always_inline
     fn update(inout self, input_buffer: DTypePointer[DType.uint8], length: Int):
-        var offset = (self.size & 63).to_int()
+        var offset = int(self.size & 63)
         var input = SIMD[DType.uint32, 16]()
         self.size += length
 
@@ -70,7 +70,7 @@ struct Md5Context:
     @always_inline
     fn finalize(owned self) -> SIMD[DType.uint8, 16]:
         var input = SIMD[DType.uint32, 16]()
-        var offset = (self.size & 63).to_int()
+        var offset = int(self.size & 63)
         var padding_length = 56 - offset if offset < 56 else 56 + 64 - offset
 
         self.update(PADDING, padding_length)
@@ -107,7 +107,7 @@ struct Md5Context:
             else:
                 e = cc ^ (bb | ~dd)
                 j = (i * 7) & 15
-            aa, bb, cc, dd = dd, bb + rotate_bits_left[S[i].to_int()](aa + e + K[i] + input[j]), bb, cc
+            aa, bb, cc, dd = dd, bb + rotate_bits_left[int(S[i])](aa + e + K[i] + input[j]), bb, cc
         
         unroll[shuffle, 64]()
 
@@ -116,5 +116,5 @@ struct Md5Context:
 @always_inline
 fn md5_string(value: String) -> SIMD[DType.uint8, 16]:
     var ctx = Md5Context()
-    ctx.update(value._as_ptr().bitcast[DType.uint8](), len(value))
+    ctx.update(value.unsafe_uint8_ptr(), len(value))
     return ctx^.finalize()

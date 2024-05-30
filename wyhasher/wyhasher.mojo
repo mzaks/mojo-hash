@@ -1,6 +1,6 @@
 
-from math.bit import bit_length, bswap
-from math.math import rotate_bits_right
+from bit import bit_width, byte_reverse
+from bit import rotate_bits_right
 
 alias U128 = SIMD[DType.uint64, 2]
 alias U256 = SIMD[DType.uint64, 4]
@@ -56,7 +56,7 @@ fn wyr3(p: DTypePointer[DType.uint8], k: Int) -> UInt64:
 
 fn wyhash(key: String, _seed: UInt64, secret: U256 = default_secret) -> UInt64:
     var length = len(key)
-    var p = key._as_ptr().bitcast[DType.uint8]()
+    var p = DTypePointer(key.unsafe_uint8_ptr())
     var seed = _seed ^wy_mix(_seed ^ secret[0], secret[1])
     var a: UInt64 = 0
     var b: UInt64 = 0

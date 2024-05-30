@@ -7,7 +7,7 @@ alias fnv_64_offset_bassis = 0xcbf29ce484222325
 @always_inline
 fn fnv1a32(s: String) -> UInt32:
     var hash = fnv_32_offset_bassis
-    var buffer = s._as_ptr().bitcast[DType.uint8]()
+    var buffer = DTypePointer(s.unsafe_uint8_ptr())
     for i in range(len(s)):
         hash ^= buffer.load(i).cast[DType.uint32]()
         hash *= fnv_32_prime
@@ -16,7 +16,7 @@ fn fnv1a32(s: String) -> UInt32:
 @always_inline
 fn fnv1a64(s: String) -> UInt64:
     var hash: UInt64 = fnv_64_offset_bassis
-    var buffer = s._as_ptr().bitcast[DType.uint8]()
+    var buffer = DTypePointer(s.unsafe_uint8_ptr())
     for i in range(len(s)):
         hash ^= buffer.load(i).cast[DType.uint64]()
         hash *= fnv_64_prime

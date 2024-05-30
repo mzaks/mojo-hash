@@ -1,7 +1,6 @@
 from time import now
-from math import min, max
 from memory.unsafe import bitcast
-from fiby_tree import FibyTree
+# from fiby_tree import FibyTree
 from my_utils import int_cmp64, int_to_str64, cmp_str, stsl, int_cmp, int_to_str, corpus1, corpus2, corpus3, corpus4, corpus5, corpus6, corpus7, corpus8
 from ahasher import ahash
 from wyhasher import wyhash
@@ -11,22 +10,22 @@ from md5 import md5_string
 
 @always_inline
 fn std_hash64(s: String) -> UInt64:
-    return hash(s._as_ptr(), len(s))
+    return hash(s)
 
 @always_inline
 fn md5_hash(s: String) -> UInt64:
     return bitcast[DType.uint64, 2](md5_string(s))[0]
 
-fn benchamark[hashfn: fn(String) -> UInt64](corpus: DynamicVector[String], name: StringLiteral):
+fn benchamark[hashfn: fn(String) -> UInt64](corpus: List[String], name: StringLiteral):
     # var f = FibyTree[UInt64, int_cmp64, int_to_str64]()
     # var f1 = FibyTree[UInt64, int_cmp64, int_to_str64]()
-    var fs = FibyTree[String, cmp_str, String.__str__]()
+    var fs = Set[String]()
     var min_avg: Float64 = 100000.0
     var mod = (1 << 9)
-    var hashes = DynamicVector[UInt64]()
-    var mod_hashes: DynamicVector[UInt64] = DynamicVector[UInt64]()
+    var hashes = List[UInt64]()
+    var mod_hashes: List[UInt64] = List[UInt64]()
     var total = 0
-    for _ in range(20):
+    for step in range(20):
         for i in range(len(corpus)):
             var key = corpus[i]
             var tik = now()
@@ -49,7 +48,8 @@ fn benchamark[hashfn: fn(String) -> UInt64](corpus: DynamicVector[String], name:
             if not found:
                 mod_hashes.append(hash & (mod - 1))# f.add(hash)
             # f1.add(hash & (mod - 1))
-            fs.add(key)
+            if step == 0:
+                fs.add(key)
     var c_avg = (total / 20) / len(corpus)
     min_avg = min(min_avg, c_avg)
     print(
@@ -57,16 +57,16 @@ fn benchamark[hashfn: fn(String) -> UInt64](corpus: DynamicVector[String], name:
         "| hash colision mod", mod, len(fs) /  len(mod_hashes)
     )
 
-fn benchamark32[hashfn: fn(String) -> UInt32](corpus: DynamicVector[String], name: StringLiteral):
+fn benchamark32[hashfn: fn(String) -> UInt32](corpus: List[String], name: StringLiteral):
     # var f = FibyTree[UInt32, int_cmp, int_to_str]()
     # var f1 = FibyTree[UInt32, int_cmp, int_to_str]()
-    var fs = FibyTree[String, cmp_str, String.__str__]()
+    var fs = Set[String]()
     var min_avg: Float64 = 100000.0
     var mod = (1 << 9)
-    var hashes: DynamicVector[UInt32] = DynamicVector[UInt32]()
-    var mod_hashes: DynamicVector[UInt32] = DynamicVector[UInt32]()
+    var hashes: List[UInt32] = List[UInt32]()
+    var mod_hashes: List[UInt32] = List[UInt32]()
     var total = 0
-    for _ in range(20):
+    for step in range(20):
         for i in range(len(corpus)):
             var key = corpus[i]
             var tik = now()
@@ -89,7 +89,8 @@ fn benchamark32[hashfn: fn(String) -> UInt32](corpus: DynamicVector[String], nam
                 mod_hashes.append(hash & (mod - 1))
             # f.add(hash)
             # f1.add(hash & (mod - 1))
-            fs.add(key)
+            if step == 0:
+                fs.add(key)
     var c_avg = (total / 20) / len(corpus)
     min_avg = min(min_avg, c_avg)
     print(
@@ -98,10 +99,10 @@ fn benchamark32[hashfn: fn(String) -> UInt32](corpus: DynamicVector[String], nam
     )
 
 
-fn corpus_details(corpus: DynamicVector[String]):
+fn corpus_details(corpus: List[String]):
     var word_count = len(corpus)
     print(word_count)
-    var fs = FibyTree[String, cmp_str, String.__str__]()
+    var fs = Set[String]()
     var min_key_size = 10000000
     var max_key_size = 0
     var total_key_size = 0
