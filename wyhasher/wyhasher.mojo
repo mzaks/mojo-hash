@@ -1,5 +1,5 @@
 
-from bit import bit_width, byte_reverse
+from bit import bit_width, byte_swap
 from bit import rotate_bits_right
 
 alias U128 = SIMD[DType.uint64, 2]
@@ -41,23 +41,23 @@ fn wy_mix(_a: UInt64, _b: UInt64) -> UInt64:
     return a ^ b
 
 @always_inline
-fn wyr8(p: DTypePointer[DType.uint8]) -> UInt64:
+fn wyr8(p: UnsafePointer[UInt8]) -> UInt64:
     return p.bitcast[DType.uint64]().load()
 
 @always_inline
-fn wyr4(p: DTypePointer[DType.uint8]) -> UInt64:
+fn wyr4(p: UnsafePointer[UInt8]) -> UInt64:
     return p.bitcast[DType.uint32]().load().cast[DType.uint64]()
 
 @always_inline
-fn wyr3(p: DTypePointer[DType.uint8], k: Int) -> UInt64:
+fn wyr3(p: UnsafePointer[UInt8], k: Int) -> UInt64:
     return (p.load().cast[DType.uint64]() << 16) 
         | (p.offset(k >> 1).load().cast[DType.uint64]() << 8)
         | p.offset(k - 1).load().cast[DType.uint64]()
 
 fn wyhash(key: String, _seed: UInt64, secret: U256 = default_secret) -> UInt64:
     var length = len(key)
-    var p = DTypePointer(key.unsafe_uint8_ptr())
-    var seed = _seed ^wy_mix(_seed ^ secret[0], secret[1])
+    var p = UnsafePointer(key.unsafe_ptr())
+    var seed = _seed ^ wy_mix(_seed ^ secret[0], secret[1])
     var a: UInt64 = 0
     var b: UInt64 = 0
     if length <= 16:
@@ -71,7 +71,7 @@ fn wyhash(key: String, _seed: UInt64, secret: U256 = default_secret) -> UInt64:
         var see1 = seed
         var see2 = seed
 
-        while length > 48:
+        while length >= 48:
             var p64 = p.bitcast[DType.uint64]()
             var data1 = p64.load[width=4]()
             var data2 = p64.load[width=2]()

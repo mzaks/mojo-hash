@@ -33,8 +33,8 @@ alias K = SIMD[DType.uint32, 64](
 
 alias PADDING = create_padding()
 
-fn create_padding() -> DTypePointer[DType.uint8]:
-    var result = DTypePointer[DType.uint8].alloc(64)
+fn create_padding() -> UnsafePointer[UInt8]:
+    var result = UnsafePointer[UInt8].alloc(64)
     result.store(0, 0x80)
     for i in range(1, 64):
         result.store(i, 0)
@@ -53,7 +53,7 @@ struct Md5Context:
         self.digest = SIMD[DType.uint8, 16]()
 
     @always_inline
-    fn update(inout self, input_buffer: DTypePointer[DType.uint8], length: Int):
+    fn update(inout self, input_buffer: UnsafePointer[UInt8], length: Int):
         var offset = int(self.size & 63)
         var input = SIMD[DType.uint32, 16]()
         self.size += length
@@ -116,5 +116,5 @@ struct Md5Context:
 @always_inline
 fn md5_string(value: String) -> SIMD[DType.uint8, 16]:
     var ctx = Md5Context()
-    ctx.update(value.unsafe_uint8_ptr(), len(value))
+    ctx.update(value.unsafe_ptr(), len(value))
     return ctx^.finalize()

@@ -1,3 +1,4 @@
+from collections import Set
 from time import now
 from memory.unsafe import bitcast
 # from fiby_tree import FibyTree
@@ -16,7 +17,7 @@ fn std_hash64(s: String) -> UInt64:
 fn md5_hash(s: String) -> UInt64:
     return bitcast[DType.uint64, 2](md5_string(s))[0]
 
-fn benchamark[hashfn: fn(String) -> UInt64](corpus: List[String], name: StringLiteral):
+fn benchamark[hashfn: fn(String) -> UInt64, steps: Int = 20](corpus: List[String], name: StringLiteral, ):
     # var f = FibyTree[UInt64, int_cmp64, int_to_str64]()
     # var f1 = FibyTree[UInt64, int_cmp64, int_to_str64]()
     var fs = Set[String]()
@@ -25,7 +26,7 @@ fn benchamark[hashfn: fn(String) -> UInt64](corpus: List[String], name: StringLi
     var hashes = List[UInt64]()
     var mod_hashes: List[UInt64] = List[UInt64]()
     var total = 0
-    for step in range(20):
+    for step in range(steps):
         for i in range(len(corpus)):
             var key = corpus[i]
             var tik = now()
@@ -50,14 +51,14 @@ fn benchamark[hashfn: fn(String) -> UInt64](corpus: List[String], name: StringLi
             # f1.add(hash & (mod - 1))
             if step == 0:
                 fs.add(key)
-    var c_avg = (total / 20) / len(corpus)
+    var c_avg = (total / steps) / len(corpus)
     min_avg = min(min_avg, c_avg)
     print(
         name, "avg hash compute", min_avg, "| hash colision", len(fs) / len(hashes),
         "| hash colision mod", mod, len(fs) /  len(mod_hashes)
     )
 
-fn benchamark32[hashfn: fn(String) -> UInt32](corpus: List[String], name: StringLiteral):
+fn benchamark32[hashfn: fn(String) -> UInt32, steps: Int = 20](corpus: List[String], name: StringLiteral):
     # var f = FibyTree[UInt32, int_cmp, int_to_str]()
     # var f1 = FibyTree[UInt32, int_cmp, int_to_str]()
     var fs = Set[String]()
@@ -66,7 +67,7 @@ fn benchamark32[hashfn: fn(String) -> UInt32](corpus: List[String], name: String
     var hashes: List[UInt32] = List[UInt32]()
     var mod_hashes: List[UInt32] = List[UInt32]()
     var total = 0
-    for step in range(20):
+    for step in range(steps):
         for i in range(len(corpus)):
             var key = corpus[i]
             var tik = now()
@@ -91,7 +92,7 @@ fn benchamark32[hashfn: fn(String) -> UInt32](corpus: List[String], name: String
             # f1.add(hash & (mod - 1))
             if step == 0:
                 fs.add(key)
-    var c_avg = (total / 20) / len(corpus)
+    var c_avg = (total / steps) / len(corpus)
     min_avg = min(min_avg, c_avg)
     print(
         name, "avg hash compute", min_avg, "| hash colision", len(fs) / len(hashes), 
@@ -219,11 +220,11 @@ fn main() raises:
     var c8 = corpus8()
     print("\nCorpus 8")
     corpus_details(c8)
-    benchamark[ahash](c8, "AHash")
-    benchamark[sample_wyhash](c8, "Wyhash")
-    benchamark32[fnv1a32](c8, "fnv1a32")
-    benchamark[fnv1a64](c8, "fnv1a64")
-    benchamark32[sample_fxhash32](c8, "fxHash32")
-    benchamark[sample_fxhash64](c8, "fxHash64")
-    benchamark[std_hash64](c8, "std_Hash64")
-    benchamark[md5_hash](c8, "MD5")
+    benchamark[ahash, 1](c8, "AHash")
+    benchamark[sample_wyhash, 1](c8, "Wyhash")
+    benchamark32[fnv1a32, 1](c8, "fnv1a32")
+    benchamark[fnv1a64, 1](c8, "fnv1a64")
+    benchamark32[sample_fxhash32, 1](c8, "fxHash32")
+    benchamark[sample_fxhash64, 1](c8, "fxHash64")
+    benchamark[std_hash64, 1](c8, "std_Hash64")
+    # benchamark[md5_hash, 1](c8, "MD5")

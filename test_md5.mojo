@@ -10,8 +10,8 @@ fn to_hex(v: SIMD[DType.uint8, 16]) -> String:
     for i in range(16):
         var h = v[i] >> 4
         var l = v[i] & 15
-        result += alphabete[h.to_int()]
-        result += alphabete[l.to_int()]
+        result += alphabete[int(h)]
+        result += alphabete[int(l)]
     return result
 
 fn main() raises:

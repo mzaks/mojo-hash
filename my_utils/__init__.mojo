@@ -1,3 +1,4 @@
+from memory import memcmp
 from pathlib import Path
 
 fn int_cmp(a: UInt32, b: UInt32) -> Int:
@@ -14,16 +15,16 @@ fn int_to_str64(a: UInt64) -> String:
 
 fn cmp_strl(a: StringLiteral, b: StringLiteral) -> Int:
     var l = min(len(a), len(b))
-    var p1 = a.as_uint8_ptr()
-    var p2 = b.as_uint8_ptr()
+    var p1 = a.unsafe_ptr()
+    var p2 = b.unsafe_ptr()
     var diff = memcmp(p1, p2, l)
 
     return diff if diff != 0 else len(a) - len(b)
 
 fn cmp_str(a: String, b: String) -> Int:
     var l = min(len(a), len(b))
-    var p1 = a.unsafe_uint8_ptr()
-    var p2 = b.unsafe_uint8_ptr()
+    var p1 = a.unsafe_ptr()
+    var p2 = b.unsafe_ptr()
     var diff = memcmp(p1, p2, l)
 
     return diff if diff != 0 else len(a) - len(b)
@@ -55,4 +56,4 @@ fn corpus7() raises -> List[String]:
 fn corpus8() raises -> List[String]:
     var text = Path("/usr/share/dict/words").read_text()
     print("Text:", len(text))
-    return text.split("\n")
+    return text.splitlines()

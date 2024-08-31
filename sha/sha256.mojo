@@ -73,7 +73,7 @@ alias h = SIMD[DType.uint32, 8](
 # for reference see https://en.wikipedia.org/wiki/SHA-2#Pseudocode
 # right now it internally copies the byte_view into a dynamic vector and works on that
 # this is slow, but i don't have the mojo mojo to chunk it out for zero-copy
-fn sha256_encode(byte_view: DTypePointer[DType.uint8], length: Int) -> InlinedFixedVector[UInt8, 32]:
+fn sha256_encode(byte_view: UnsafePointer[UInt8], length: Int) -> InlinedFixedVector[UInt8, 32]:
 
 	var h0: UInt32 = 0x6A09E667
 	var h1: UInt32 = 0xBB67AE85

@@ -6,7 +6,7 @@ alias SEED32 = 0x9e_37_79_b9
 
 @always_inline
 fn fxhash32(s: String, seed: UInt32 = 0) -> UInt32:
-    var bytes = DTypePointer(s.unsafe_uint8_ptr())
+    var bytes = UnsafePointer(s.unsafe_ptr())
     var count = len(s)
     var hash = seed
     while count >= 4:
@@ -23,7 +23,7 @@ fn fxhash32(s: String, seed: UInt32 = 0) -> UInt32:
 
 @always_inline
 fn fxhash64(s: String, seed: UInt64 = 0) -> UInt64:
-    var bytes = DTypePointer(s.unsafe_uint8_ptr())
+    var bytes = UnsafePointer(s.unsafe_ptr())
     var count = len(s)
     var hash = seed
     while count >= 8:

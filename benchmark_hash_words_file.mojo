@@ -36,7 +36,7 @@ fn main() raises:
     print("MD5     :", tok - tik, to_hex(h0), len(text))
     
     tik = now()
-    var h5 = sha256_encode(text.unsafe_uint8_ptr(), 0)
+    var h5 = sha256_encode(text.unsafe_ptr(), 0)
     tok = now()
     print("SHA256  :", tok - tik, to_hex(h5), len(text))
 
@@ -56,7 +56,7 @@ fn main() raises:
     print("Fxhash  :", tok - tik, h3, len(text))
 
     tik = now()
-    var h4 = hash(text.unsafe_uint8_ptr(), len(text))
+    var h4 = hash(text.unsafe_ptr(), len(text))
     tok = now()
     print("Std hash:", tok - tik, h4, len(text))
 
@@ -74,7 +74,7 @@ fn main() raises:
 
     @parameter
     fn hash_test():
-        hi = hash(text.unsafe_uint8_ptr(), len(text))
+        hi = hash(text.unsafe_ptr(), len(text))
 
     print("===Std hash===")
     var report1 = benchmark.run[hash_test]()
