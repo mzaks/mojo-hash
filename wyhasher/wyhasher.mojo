@@ -72,16 +72,9 @@ fn wyhash(key: String, _seed: UInt64, secret: U256 = default_secret) -> UInt64:
         var see2 = seed
 
         while length >= 48:
-            var p64 = p.bitcast[DType.uint64]()
-            var data1 = p64.load[width=4]()
-            var data2 = p64.load[width=2]()
-            var seed_values1 = U256(secret[1], seed, secret[2], see1)
-            var seed_values2 = U128(secret[3], see2)
-            var seeded_data1 = data1 ^ seed_values1
-            var seeded_data2 = data2 ^ seed_values2
-            seed = wy_mix(seed_values1[0], seed_values1[1])
-            see1 = wy_mix(seed_values1[2], seed_values1[3])
-            see2 = wy_mix(seed_values2[0], seed_values2[1])
+            seed = wy_mix(wyr8(p) ^ secret[1], wyr8(p + 8) ^ seed)
+            see1 = wy_mix(wyr8(p + 16) ^ secret[2], wyr8(p + 24) ^ see1)
+            see2 = wy_mix(wyr8(p + 32) ^ secret[3], wyr8(p + 40) ^ see2)
             p = p.offset(48)
             length -= 48
         

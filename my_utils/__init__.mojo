@@ -55,5 +55,5 @@ fn corpus7() raises -> List[String]:
 
 fn corpus8() raises -> List[String]:
     var text = Path("/usr/share/dict/words").read_text()
-    print("Text:", len(text))
+    # print("Text:", len(text))
     return text.splitlines()
